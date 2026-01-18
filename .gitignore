@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# --- OS files (Da ne bi imao Thumbs.db konflikte sa Windowsa) ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- IDE & Editors (Da ne delite lokalna podesavanja editora) ---
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
