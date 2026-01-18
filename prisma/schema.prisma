@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+}
+enum Role {
+  ADMIN
+  COMPANY
+  STUDENT
+}
+
+enum JobType {
+  INTERNSHIP
+  JOB
+}
+
+enum JobStatus {
+  ACTIVE
+  EXPIRED
+  CLOSED
+}
+
+enum StudentStatus {
+  STUDYING
+  GRADUATED
+}
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+model User {
+    id Int @id @default(autoincrement())
+    email String @unique
+    password String
+    firstName String
+    lastName String
+    phone String?
+    role Role @default(STUDENT)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    studentProfile Student?
+    companyProfile Company?
+}
+model Student {
+    studentId Int @id
+    user User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+    studentIndex String @unique
+    status StudentStatus @default(STUDYING)
+    profileDescription String?
+    applications JobApplication[]
+    savedAds SavedAd[]
+}
+model Company {
+    companyId Int @id
+    user User @relation(fields: [companyId], references: [id], onDelete: Cascade)
+    companyName String
+    taxNumber String @unique
+    regNumber String @unique
+    industry String
+    website String
+    location String
+    isApproved    Boolean   @default(false)
+    ads  Ad[]
+}
+model Ad {
+    id Int @id @default(autoincrement())
+    companyId Int
+    company Company @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+    title String
+    description String
+    requirements String
+    location String
+    deadline DateTime
+    status JobStatus @default(ACTIVE)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    jobType JobType
+    applications JobApplication[]
+    savedBy SavedAd[]
+}
+model SavedAd {
+  studentId   Int
+  student     Student   @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
+  adId        Int
+  ad          Ad        @relation(fields: [adId], references: [id], onDelete: Cascade)
+  savedAt     DateTime  @default(now())
+  @@id([studentId, adId])
+}
+model JobApplication {
+    id Int @id @default(autoincrement())
+    adId Int
+    ad Ad @relation(fields: [adId], references: [id], onDelete: Cascade)
+    studentId Int
+    student Student @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
+    status ApplicationStatus @default(PENDING)
+    appliedAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    @@unique([studentId, adId])
+}
