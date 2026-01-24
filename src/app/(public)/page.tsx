@@ -1,10 +1,9 @@
-
 "use client";
 
 import React, { useState } from 'react';
 
 /**
- * 1. TIPES & MOCK DATA
+ * 1. TYPES & MOCK DATA
  */
 interface Opportunity {
   id: string;
@@ -49,6 +48,13 @@ const OPPORTUNITIES: Opportunity[] = [
 /**
  * 2. ICONS
  */
+const LogoIcon = () => (
+  <svg className="w-8 h-8 text-teal-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+    <polyline points="16 7 22 7 22 13" />
+  </svg>
+);
+
 const BriefcaseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
 );
@@ -66,8 +72,37 @@ const SearchIcon = () => (
 );
 
 /**
- * 3. SUB-COMPONENT: OPPORTUNITY CARD
+ * 3. SUB-COMPONENTS
  */
+const Navbar = () => (
+  <nav className="fixed top-0 w-full bg-white z-50 border-b border-gray-100">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex justify-between items-center h-20">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <LogoIcon />
+          <span className="text-2xl font-bold text-blue-900 tracking-tight">Career Hub</span>
+        </div>
+
+        {/* Links */}
+        <div className="hidden md:flex items-center space-x-8">
+          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">About</a>
+          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">For Students</a>
+          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">For Companies</a>
+        </div>
+
+        {/* Auth Buttons */}
+        <div className="flex items-center space-x-4">
+          <button className="text-gray-900 font-bold hover:text-blue-600 px-4 py-2 transition-colors">Login</button>
+          <button className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all shadow-md active:scale-95">
+            Register
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+);
+
 const OpportunityCard = ({ item }: { item: Opportunity }) => (
   <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full group">
     <div className="mb-5">
@@ -120,19 +155,21 @@ export default function AdsPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50/30">
+      <Navbar />
+
       {/* HERO SECTION */}
-      <section className="relative w-full py-20 md:py-32 px-4 bg-gradient-to-br from-blue-700 via-blue-600 to-teal-500">
+      <section className="relative w-full pt-40 pb-20 md:pt-48 md:pb-32 px-4 bg-gradient-to-br from-[#1e3a8a] via-[#1d4ed8] to-[#14b8a6]">
         <div className="relative max-w-5xl mx-auto text-center">
-          <h1 className="text-4xl md:text-7xl font-black text-white mb-6 tracking-tight leading-tight">
-            Poveži talenat sa <br /> <span className="text-teal-200">prilikom</span>
+          <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
+            Connect Talent with <br /> <span className="opacity-90">Opportunity</span>
           </h1>
           <p className="text-lg md:text-xl text-blue-50 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-            Spajamo studente i diplomce sa vodećim kompanijama. 
+            The premier platform connecting students and alumni with companies for jobs, internships, and projects.
           </p>
 
           <div className="relative max-w-2xl mx-auto">
-            <div className="flex items-center bg-white p-2 rounded-2xl shadow-2xl">
+            <div className="flex items-center bg-white p-1.5 rounded-2xl shadow-2xl">
               <div className="flex-grow flex items-center px-4">
                 <div className="text-gray-400">
                   <SearchIcon />
@@ -141,12 +178,13 @@ export default function AdsPage() {
                   type="text" 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Pretraži poslove ili kompanije..." 
-                  className="w-full py-3.5 px-3 text-gray-700 focus:outline-none bg-transparent text-lg"
+                  placeholder="Search for jobs, internships, or projects..." 
+                  className="w-full py-3.5 px-3 text-gray-700 focus:outline-none bg-transparent text-base"
                 />
               </div>
-              <button className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white px-10 py-3.5 rounded-xl font-bold transition-all shadow-lg active:scale-95">
-                Pretraži
+              <button className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-3.5 rounded-xl font-bold transition-all flex items-center gap-2">
+                <SearchIcon />
+                <span className="hidden md:inline">Search</span>
               </button>
             </div>
           </div>
@@ -155,14 +193,15 @@ export default function AdsPage() {
 
       {/* FEATURED OPPORTUNITIES */}
       <section className="max-w-7xl mx-auto py-24 px-6 md:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">
-              Aktuelni oglasi
+            <h2 className="text-3xl md:text-4xl font-bold text-blue-900 tracking-tight mb-2">
+              Featured Opportunities
             </h2>
+            <p className="text-gray-500 font-medium">High-priority positions available now</p>
           </div>
-          <button className="px-6 py-3 border-2 border-gray-100 rounded-xl text-sm font-bold text-gray-700 hover:border-blue-600 hover:text-blue-600 transition-all">
-            Pogledaj sve oglase
+          <button className="px-6 py-2.5 border border-gray-200 rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all">
+            View All
           </button>
         </div>
 
@@ -175,3 +214,6 @@ export default function AdsPage() {
     </div>
   );
 }
+
+
+
