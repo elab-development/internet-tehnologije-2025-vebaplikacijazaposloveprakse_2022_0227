@@ -26,6 +26,15 @@ export async function POST(req: Request) {
             where: { email }
         });
         if (!user) return NextResponse.json({ message: "Pogresan email ili lozinka" }, { status: 401 });
+        if (user.role === "COMPANY") {
+            const company = await db.company.findUnique({ where: { companyId: user.id } });
+            if (company && !company.isApproved) {
+                return NextResponse.json(
+                    { message: "Vaš nalog jos uvek nije odobren od strane administratora." },
+                    { status: 403 }
+                );
+            }
+        }
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) return NextResponse.json({ message: "Pogresan email ili lozinka" }, { status: 401 });
 
