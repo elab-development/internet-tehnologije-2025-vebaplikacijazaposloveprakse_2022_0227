@@ -13,8 +13,9 @@ export async function POST(req: Request) {
         }
         const validation = RegisterSchema.safeParse(body);
         if(!validation.success){
+            const firstErrorMessage = validation.error.issues[0]?.message || "Validacija nije uspela";
             return NextResponse.json({
-                message: "Validacija nije prosla",
+                message: firstErrorMessage,
                 errors: validation.error.issues
             }, { status: 400 });
         }
