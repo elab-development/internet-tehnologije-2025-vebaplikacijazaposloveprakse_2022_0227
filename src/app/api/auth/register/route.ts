@@ -4,58 +4,65 @@ import { RegisterSchema } from "@/src/lib/validators/auth";
 import { NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
 export async function POST(req: Request) {
-    try{
+    try {
         let body;
-        try{
+        try {
             body = await req.json();
-        }catch(error){
-            return NextResponse.json({ message: "Invalid JSON body" }, { status:400 });
+        } catch (error) {
+            return NextResponse.json({ message: "Invalid JSON body" }, { status: 400 });
         }
         const validation = RegisterSchema.safeParse(body);
-        if(!validation.success){
+        if (!validation.success) {
             const firstErrorMessage = validation.error.issues[0]?.message || "Validacija nije uspela";
             return NextResponse.json({
                 message: firstErrorMessage,
                 errors: validation.error.issues
             }, { status: 400 });
         }
-        const { 
+        const {
             email, password, firstName, lastName, role, phone, // User podaci
             companyName, taxNumber, regNumber, industry, website, location, // Company podaci
             studentIndex, profileDescription // Student podaci
         } = validation.data;
         const existingUser = await db.user.findUnique({
-            where: {email},
-            select: {id:true}
+            where: { email },
+            select: { id: true }
         });
-        if(existingUser){
+        if (existingUser) {
             return NextResponse.json(
                 { message: "Korisnik sa ovim email-om vec postoji." },
                 { status: 409 }
             );
         }
-        if(role=="COMPANY"){
+        if (role == "COMPANY") {
             const existingCompany = await db.company.findFirst({
                 where: {
                     OR: [
-                            { taxNumber: taxNumber },
-                            { regNumber: regNumber }
-                        ]
+                        { taxNumber: taxNumber },
+                        { regNumber: regNumber }
+                    ]
                 },
-                select: {companyId:true}
+                select: { companyId: true }
             });
-            if(existingCompany){
+            if (existingCompany) {
                 return NextResponse.json(
                     { message: "Firma sa ovim PIB-om ili Maticnim brojem vec postoji." },
                     { status: 409 }
                 );
             }
         }
-        const hashedPassword = await bcrypt.hash(password,12);
-        await db.$transaction(async(prisma)=>{
+        if (role === "STUDENT") {
+            const existingStudent = await db.student.findUnique({
+                where: { studentIndex },
+                select: { studentId: true }
+            });
+            if (existingStudent) return NextResponse.json({ message: "Student sa ovim brojem indeksa vec postoji." }, { status: 409 });
+        }
+        const hashedPassword = await bcrypt.hash(password, 12);
+        await db.$transaction(async (prisma) => {
             const userRole = role === "COMPANY" ? "COMPANY" : "STUDENT";
             const newUser = await prisma.user.create({
-                data:{
+                data: {
                     email,
                     firstName,
                     lastName,
@@ -64,7 +71,7 @@ export async function POST(req: Request) {
                     role: userRole
                 }
             });
-            if(userRole=="COMPANY"){
+            if (userRole == "COMPANY") {
                 await prisma.company.create({
                     data: {
                         companyId: newUser.id,
@@ -75,13 +82,13 @@ export async function POST(req: Request) {
                         website: website!,
                         location: location!,
                         isApproved: false
-                        
+
                     }
                 });
-            }else if(userRole=="STUDENT"){
+            } else if (userRole == "STUDENT") {
                 await prisma.student.create({
                     data: {
-                        studentId: newUser.id, 
+                        studentId: newUser.id,
                         studentIndex: studentIndex!,
                         status: "STUDYING",
                         profileDescription: profileDescription,
@@ -90,7 +97,7 @@ export async function POST(req: Request) {
             }
         });
         return NextResponse.json({ message: "Uspesna registracija!" }, { status: 201 });
-    }catch(error){
+    } catch (error) {
         console.error(error);
         return NextResponse.json({ message: "Greska na serveru" }, { status: 500 });
     }

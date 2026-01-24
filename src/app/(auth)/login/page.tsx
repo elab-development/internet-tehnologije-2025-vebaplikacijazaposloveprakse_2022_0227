@@ -1,10 +1,33 @@
 "use client";
-
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Lock, ArrowRight, ArrowLeft } from "lucide-react";
+import { Mail, Lock, ArrowRight, ArrowLeft, CircleX, CheckCircle2 } from "lucide-react";
+import { authService } from "@/src/services/authService";
 
 export default function LoginPage() {
+    const searchParams = useSearchParams();
+    const isSuccess = searchParams.get("success");
+    //--------------------------------------------//
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    //--------------------------------------------//
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        const formData = new FormData(e.currentTarget as HTMLFormElement);
+        const data = Object.fromEntries(formData.entries());
+        try {
+            await authService.login(data);
+            window.location.href = "/";
+        } catch (err: any) {
+            setError(err.message || "Doslo je do greske tokom prijave.");
+        } finally {
+            setLoading(false);
+        }
+    };
     return (
         <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 font-sans">
             <div className="absolute top-8 left-8">
@@ -31,9 +54,20 @@ export default function LoginPage() {
             </div>
             <div className="w-full max-w-[420px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden">
                 <div className="h-2 w-full bg-gradient-to-r from-[#1a3a94] to-[#2bc3c3]" />
-
+                {isSuccess && (
+                    <div className="mb-6 p-4 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+                        <CheckCircle2 size={18} strokeWidth={3} />
+                        <span>Uspešna registracija! Prijavi se.</span>
+                    </div>
+                )}
+                {error && (
+                    <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+                        <CircleX size={18} strokeWidth={3} />
+                        <span>{error}</span>
+                    </div>
+                )}
                 <div className="p-10">
-                    <form className="space-y-6">
+                    <form className="space-y-6" onSubmit={handleSubmit}>
                         <div className="relative group">
                             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <Mail
@@ -43,6 +77,7 @@ export default function LoginPage() {
                                 />
                             </div>
                             <input
+                                name="email"
                                 type="email"
                                 placeholder="Email adresa"
                                 className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2bc3c3] focus:bg-white font-bold transition-all text-gray-700 placeholder:text-gray-300"
@@ -57,6 +92,7 @@ export default function LoginPage() {
                                 />
                             </div>
                             <input
+                                name="password"
                                 type="password"
                                 placeholder="Lozinka"
                                 className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2bc3c3] focus:bg-white font-bold transition-all text-gray-700 placeholder:text-gray-300"
@@ -64,7 +100,7 @@ export default function LoginPage() {
                         </div>
 
                         <button className="cursor-pointer w-full flex items-center justify-center gap-2 py-5 rounded-2xl bg-[#2bc3c3] text-white font-black tracking-[0.2em] shadow-xl shadow-[#2bc3c3]/30 transition-all hover:translate-y-[-2px] active:scale-95">
-                            PRIJAVI SE
+                            {loading ? "SLANJE PODATAKA..." : "PRIJAVI SE"}
                             <ArrowRight size={18} strokeWidth={3} />
                         </button>
                     </form>
