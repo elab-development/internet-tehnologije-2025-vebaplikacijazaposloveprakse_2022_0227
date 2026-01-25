@@ -1,3 +1,4 @@
+import { AuthResponse } from "../types/auth";
 import { AuthUser, UpdateUserData } from "../types/user";
 
 export const userService = {
@@ -11,12 +12,14 @@ export const userService = {
     
     return result;
   },
-  async updateUser(data: UpdateUserData): Promise<void> {
+  async updateUser(data: UpdateUserData): Promise<AuthResponse> {
     const res = await fetch("/api/users/me", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error("Greska pri azuriranju profila");
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.message || "Greska pri azuriranju profila");
+    return result;
   }
 };
