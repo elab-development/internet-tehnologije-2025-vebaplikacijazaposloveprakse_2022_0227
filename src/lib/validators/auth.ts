@@ -1,4 +1,5 @@
-import { z } from "zod";
+import { Role } from "@prisma/client";
+import * as z  from "zod";
 
 export const RegisterBaseSchema = z.object({
   email: z.email({ error: "Neispravna email adresa" }),
@@ -6,7 +7,7 @@ export const RegisterBaseSchema = z.object({
   firstName: z.string().min(2, { error: "Ime je obavezno" }),
   lastName: z.string().min(2, { error: "Prezime je obavezno" }),
   phone: z.string().min(2, { error: "Telefon je obavezan" }),
-  role: z.enum(["STUDENT", "COMPANY", "ADMIN"]).default("STUDENT"),
+  role: z.enum(Role).default("STUDENT"),
 
   companyName: z.string().optional(),
   taxNumber: z.string().optional(),
@@ -20,31 +21,31 @@ export const RegisterBaseSchema = z.object({
 });
 
 export const RegisterSchema = RegisterBaseSchema
-  .refine((data) => data.role !== "COMPANY" || (data.companyName?.trim().length ?? 0) > 0, {
+  .refine((data) => data.role !== Role.COMPANY || (data.companyName?.trim().length ?? 0) > 0, {
     error: "Ime kompanije je obavezno",
     path: ["companyName"],
   })
-  .refine((data) => data.role !== "COMPANY" || !!data.taxNumber, {
+  .refine((data) => data.role !== Role.COMPANY || !!data.taxNumber, {
     error: "PIB je obavezan",
     path: ["taxNumber"],
   })
-  .refine((data) => data.role !== "COMPANY" || !!data.regNumber, {
+  .refine((data) => data.role !== Role.COMPANY || !!data.regNumber, {
     error: "Maticni broj je obavezan",
     path: ["regNumber"],
   })
-  .refine((data) => data.role !== "COMPANY" || !!data.industry, {
+  .refine((data) => data.role !== Role.COMPANY || !!data.industry, {
     error: "Industrija je obavezna",
     path: ["industry"],
   })
-  .refine((data) => data.role !== "COMPANY" || !!data.website, {
+  .refine((data) => data.role !== Role.COMPANY || !!data.website, {
     error: "Websajt je obavezan",
     path: ["website"],
   })
-  .refine((data) => data.role !== "COMPANY" || !!data.location, {
+  .refine((data) => data.role !== Role.COMPANY || !!data.location, {
     error: "Lokacija je obavezna",
     path: ["location"],
   })
-  .refine((data) => data.role !== "STUDENT" || !!data.studentIndex, {
+  .refine((data) => data.role !== Role.STUDENT || !!data.studentIndex, {
     error: "Broj indeksa je obavezan",
     path: ["studentIndex"],
   });
