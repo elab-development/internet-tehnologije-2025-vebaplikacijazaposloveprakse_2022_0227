@@ -5,9 +5,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { Mail, Lock, ArrowRight, ArrowLeft, CircleX, CheckCircle2 } from "lucide-react";
 import { authService } from "@/src/services/authService";
+import { useRouter } from "next/navigation";
+import { LoginSchema } from "@/src/lib/validators/auth";
 
 export default function LoginPage() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const isSuccess = searchParams.get("success");
     //--------------------------------------------//
     const [loading, setLoading] = useState(false);
@@ -19,11 +22,17 @@ export default function LoginPage() {
         setError(null);
         const formData = new FormData(e.currentTarget as HTMLFormElement);
         const data = Object.fromEntries(formData.entries());
+        const validatedData = LoginSchema.safeParse(data);
+        if (!validatedData.success) {
+            setError(validatedData.error.issues[0].message);
+            setLoading(false);
+            return;
+        }
         try {
-            await authService.login(data);
-            window.location.href = "/";
-        } catch (err: any) {
-            setError(err.message || "Doslo je do greske tokom prijave.");
+            await authService.login(validatedData.data);
+            router.push("/");
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Doslo je do greske tokom prijave.");
         } finally {
             setLoading(false);
         }
@@ -33,7 +42,7 @@ export default function LoginPage() {
             <div className="absolute top-8 left-8">
                 <Link
                     href="/"
-                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-[#1a3a94] transition-colors group"
+                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-career-blue transition-colors group"
                 >
                     <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                     Nazad na pocetnu
@@ -48,8 +57,8 @@ export default function LoginPage() {
                     priority
                     className="mx-auto mb-4"
                 />
-                <h1 className="text-3xl font-black text-[#1a3a94]">
-                    Career <span className="text-[#2bc3c3]">Hub</span>
+                <h1 className="text-3xl font-black text-career-blue">
+                    Career <span className="text-hub-cyan">Hub</span>
                 </h1>
             </div>
             <div className="w-full max-w-[420px] bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden">
@@ -73,14 +82,14 @@ export default function LoginPage() {
                                 <Mail
                                     size={20}
                                     strokeWidth={2.5}
-                                    className="text-gray-300 group-focus-within:text-[#2bc3c3] transition-colors duration-300"
+                                    className="text-gray-300 group-focus-within:text-hub-cyan transition-colors duration-300"
                                 />
                             </div>
                             <input
                                 name="email"
                                 type="email"
                                 placeholder="Email adresa"
-                                className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2bc3c3] focus:bg-white font-bold transition-all text-gray-700 placeholder:text-gray-300"
+                                className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-hub-cyan focus:bg-white font-bold transition-all text-gray-700 placeholder:text-gray-300"
                             />
                         </div>
                         <div className="relative group">
@@ -88,18 +97,20 @@ export default function LoginPage() {
                                 <Lock
                                     size={20}
                                     strokeWidth={2.5}
-                                    className="text-gray-300 group-focus-within:text-[#2bc3c3] transition-colors duration-300"
+                                    className="text-gray-300 group-focus-within:text-hub-cyan transition-colors duration-300"
                                 />
                             </div>
                             <input
                                 name="password"
                                 type="password"
                                 placeholder="Lozinka"
-                                className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-[#2bc3c3] focus:bg-white font-bold transition-all text-gray-700 placeholder:text-gray-300"
+                                className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl outline-none focus:border-hub-cyan focus:bg-white font-bold transition-all text-gray-700 placeholder:text-gray-300"
                             />
                         </div>
 
-                        <button className="cursor-pointer w-full flex items-center justify-center gap-2 py-5 rounded-2xl bg-[#2bc3c3] text-white font-black tracking-[0.2em] shadow-xl shadow-[#2bc3c3]/30 transition-all hover:translate-y-[-2px] active:scale-95">
+                        <button
+                            disabled={loading}
+                            className="cursor-pointer w-full flex items-center justify-center gap-2 py-5 rounded-2xl bg-hub-cyan text-white font-black tracking-[0.2em] shadow-xl shadow-hub-cyan/30 transition-all hover:translate-y-[-2px] active:scale-95">
                             {loading ? "SLANJE PODATAKA..." : "PRIJAVI SE"}
                             <ArrowRight size={18} strokeWidth={3} />
                         </button>
@@ -107,7 +118,7 @@ export default function LoginPage() {
                     <div className="mt-8 text-center">
                         <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">
                             Nemaš nalog?{" "}
-                            <Link href="/register" className="ml-1 text-[#1a3a94] underline underline-offset-4 decoration-2 hover:text-[#2bc3c3] transition-colors">
+                            <Link href="/register" className="ml-1 text-career-blue underline underline-offset-4 decoration-2 hover:text-hub-cyan transition-colors">
                                 Registruj se
                             </Link>
                         </p>

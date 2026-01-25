@@ -1,1 +1,10 @@
 @import "tailwindcss";
+@theme {
+  --color-career-blue: #1a3a94;
+  --color-hub-cyan: #2bc3c3;
+  --color-blue-900: #1a3a94;
+}
+:root {
+  --career-blue: #1a3a94;
+  --hub-cyan: #2bc3c3;
+}

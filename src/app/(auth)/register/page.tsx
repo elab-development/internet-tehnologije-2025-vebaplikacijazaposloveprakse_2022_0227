@@ -6,20 +6,20 @@ import Image from "next/image";
 import { ArrowLeft, ChevronDown, CircleX } from "lucide-react";
 import { useState } from "react";
 import { authService } from "@/src/services/authService";
+import { useRouter } from "next/navigation";
+import { RegisterSchema } from "@/src/lib/validators/auth";
 
 export default function RegisterPage() {
     //----------------------------------------------------------------------------------//
     const searchParams = useSearchParams();
-
+    const router = useRouter();
     const roleQuery = searchParams.get("role");
     const isStudent = roleQuery !== "company";
 
-    const careerBlue = "#1a3a94";
-    const hubCyan = "#2bc3c3";
-
-    const brandBg = isStudent ? "bg-[#1a3a94]" : "bg-[#2bc3c3]";
-    const brandText = isStudent ? "text-[#1a3a94]" : "text-[#2bc3c3]";
-    const brandRing = isStudent ? "focus:ring-[#1a3a94]" : "focus:ring-[#2bc3c3]";
+    const brandBg = isStudent ? "bg-career-blue" : "bg-hub-cyan";
+    const brandText = isStudent ? "text-career-blue" : "text-hub-cyan";
+    const brandRing = isStudent ? "focus:ring-career-blue" : "focus:ring-hub-cyan";
+    const brandShadow = isStudent ? "shadow-career-blue/30" : "shadow-hub-cyan/30";
     //----------------------------------------------------------------------------------//
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -33,11 +33,17 @@ export default function RegisterPage() {
             ...data,
             role: isStudent ? "STUDENT" : "COMPANY",
         };
+        const validatedData = RegisterSchema.safeParse(payload);
+        if (!validatedData.success) {
+            setError(validatedData.error.issues[0].message);
+            setLoading(false);
+            return;
+        }
         try {
-            await authService.register(payload);
-            window.location.href = "/login?success=true";
-        } catch (err: any) {
-            setError(err.message || "Doslo je do greske tokom registracije.");
+            await authService.register(validatedData.data);
+            router.push("/login?registered=true");
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Doslo je do greske tokom registracije.");
         } finally {
             setLoading(false);
         }
@@ -47,7 +53,7 @@ export default function RegisterPage() {
             <div className="absolute top-8 left-8">
                 <Link
                     href="/"
-                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-[#1a3a94] transition-colors group"
+                    className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-career-blue transition-colors group"
                 >
                     <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                     Nazad na početnu
@@ -62,8 +68,8 @@ export default function RegisterPage() {
                         className="object-contain"
                     />
                 </div>
-                <h1 className="text-3xl font-black tracking-tighter text-[#1a3a94]">
-                    Career <span className="text-[#2bc3c3]">Hub</span>
+                <h1 className="text-3xl font-black tracking-tighter text-career-blue">
+                    Career <span className="text-hub-cyan">Hub</span>
                 </h1>
             </div>
 
@@ -187,9 +193,10 @@ export default function RegisterPage() {
                                             <select
                                                 name="industry"
                                                 required
+                                                defaultValue=""
                                                 className="w-full px-6 py-4 bg-white border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-[#2bc3c3] transition-all font-bold text-gray-700 appearance-none cursor-pointer"
                                             >
-                                                <option value="" disabled selected>Odaberi...</option>
+                                                <option value="" disabled>Odaberi...</option>
                                                 <option value="IT">IT & Softver</option>
                                                 <option value="Marketing">Marketing</option>
                                                 <option value="Dizajn">Dizajn</option>
@@ -234,9 +241,9 @@ export default function RegisterPage() {
                         </div>
 
                         <button
+                            disabled={loading}
                             type="submit"
-                            className={`w-full py-5 rounded-2xl text-white font-black tracking-widest shadow-xl hover:translate-y-[-2px] active:scale-95 transition-all duration-200 ${brandBg}`}
-                            style={{ boxShadow: `0 20px 30px -10px ${isStudent ? careerBlue + '50' : hubCyan + '50'}` }}
+                            className={`w-full py-5 rounded-2xl text-white font-black tracking-widest shadow-xl hover:translate-y-[-2px] active:scale-95 transition-all duration-200 ${brandBg} ${brandShadow}`}
                         >
                             {loading ? "SLANJE PODATAKA..." : "ZAVRSI REGISTRACIJU"}
                         </button>
