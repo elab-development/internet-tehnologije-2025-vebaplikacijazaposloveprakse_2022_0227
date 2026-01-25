@@ -1,19 +1,17 @@
-export enum UserRole {
-    STUDENT = "STUDENT",
-    COMPANY = "COMPANY",
-    ADMIN = "ADMIN",
-}
+import { Role } from "@prisma/client";
+import { StudentStatus } from "@prisma/client";
 export interface BaseUser {
     id: number;
     email: string;
     firstName: string;
     lastName: string;
-    phone: string;
-    role: UserRole;
+    phone: string | null;
+    role: Role;
 }
 export interface StudentProfile {
     studentIndex: string;
     profileDescription?: string | null;
+    status: StudentStatus;
 }
 export interface CompanyProfile {
     companyName: string;
@@ -25,6 +23,25 @@ export interface CompanyProfile {
 }
 
 export type AuthUser = BaseUser & {
-    student?: StudentProfile | null;
-    company?: CompanyProfile | null;
+    studentProfile?: StudentProfile | null;
+    companyProfile?: CompanyProfile | null;
 };
+
+export interface UpdateUserData {
+  firstName?: string;
+  lastName?: string;
+  phone?: string | null;
+  studentProfile?: {
+    studentIndex?: string;
+    profileDescription?: string | null;
+    status?: StudentStatus;
+  };
+  companyProfile?: {
+    companyName?: string;
+    industry?: string | null;
+    location?: string | null;
+    website?: string | null;
+    taxNumber?: string;
+    regNumber?: string | null;
+  };
+}

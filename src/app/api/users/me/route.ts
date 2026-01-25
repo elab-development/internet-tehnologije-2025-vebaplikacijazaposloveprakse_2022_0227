@@ -2,17 +2,14 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { db } from "@/src/lib/db";
+import { UpdateUserData } from "@/src/types/user";
+import { getUserFromToken } from "@/src/lib/authHelper";
 export async function GET() {
   try {
-    const token = (await cookies()).get("token")?.value;
-    if (!token) {
+    const decoded = await getUserFromToken();
+    if (!decoded) {
       return NextResponse.json({ message: "Niste ulogovani" }, { status: 401 });
     }
-    const JWT_SECRET = process.env.JWT_SECRET;
-    if (!JWT_SECRET) {
-      throw new Error("JWT_SECRET nije definisan u .env");
-    }
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number; email: string; role: string };
     const userData = await db.user.findUnique({
       where: { id: decoded.userId },
       select: {
@@ -47,5 +44,59 @@ export async function GET() {
     return NextResponse.json(userData, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: "Token nije validan" }, { status: 401 });
+  }
+}
+export async function PUT(req: Request) {
+  try {
+    const decoded = await getUserFromToken();
+
+    if (!decoded) {
+      return NextResponse.json({ message: "Niste ulogovani" }, { status: 401 });
+    }
+    const body: UpdateUserData = await req.json();
+    const { firstName, lastName, phone, studentProfile, companyProfile } = body;
+    const updatedUser = await db.user.update({
+      where: { id: decoded.userId },
+      data: {
+        firstName: firstName || undefined,
+        lastName: lastName || undefined,
+        phone: phone || undefined,
+        ...(decoded.role === "STUDENT" && studentProfile && {
+          studentProfile: {
+            update: {
+              studentIndex: studentProfile.studentIndex || undefined,
+              profileDescription: studentProfile.profileDescription || undefined,
+              status: studentProfile.status || undefined
+            },
+          },
+        }),
+        ...(decoded.role === "COMPANY" && companyProfile && {
+          companyProfile: {
+            update: {
+              companyName: companyProfile.companyName || undefined,
+              taxNumber: companyProfile.taxNumber || undefined,
+              regNumber: companyProfile.regNumber || undefined,
+              industry: companyProfile.industry || undefined,
+              website: companyProfile.website || undefined,
+              location: companyProfile.location || undefined,
+            },
+          },
+        }),
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        role: true,
+        studentProfile: true,
+        companyProfile: true
+      }
+    });
+    return NextResponse.json({ message: "Profil uspesno azuriran", user: updatedUser }, { status: 200 });
+  } catch (error) {
+    console.error("PUT Error:", error);
+    return NextResponse.json({ message: "Doslo je do greske prilikom azuriranja profila" }, { status: 500 });
   }
 }

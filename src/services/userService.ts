@@ -1,4 +1,4 @@
-import { AuthUser } from "../types/user";
+import { AuthUser, UpdateUserData } from "../types/user";
 
 export const userService = {
   async getCurrentUser(): Promise<AuthUser> {
@@ -11,4 +11,12 @@ export const userService = {
     
     return result;
   },
+  async updateUser(data: UpdateUserData): Promise<void> {
+    const res = await fetch("/api/users/me", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Greska pri azuriranju profila");
+  }
 };

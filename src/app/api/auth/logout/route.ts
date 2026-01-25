@@ -1,17 +1,7 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST() {
     try {
-        const cookieStore = await cookies();
-        const existingToken = cookieStore.get('token')?.value;
-
-        if (!existingToken) {
-            return NextResponse.json(
-                { message: "Niste ulogovani" },
-                { status: 401 }
-            );
-        }
         const response = NextResponse.json(
             { message: "Uspesno ste se odjavili!" },
             { status: 200 }
