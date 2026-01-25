@@ -86,16 +86,16 @@ const Navbar = () => (
 
         {/* Links */}
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">About</a>
-          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">For Students</a>
-          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">For Companies</a>
+          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Početna</a>
+          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Za studente</a>
+          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Za kompanije</a>
         </div>
 
         {/* Auth Buttons */}
         <div className="flex items-center space-x-4">
-          <button className="text-gray-900 font-bold hover:text-blue-600 px-4 py-2 transition-colors">Login</button>
+          <button className="text-gray-900 font-bold hover:text-blue-600 px-4 py-2 transition-colors">Prijava</button>
           <button className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all shadow-md active:scale-95">
-            Register
+            Registracija
           </button>
         </div>
       </div>
@@ -162,10 +162,10 @@ export default function AdsPage() {
       <section className="relative w-full pt-40 pb-20 md:pt-48 md:pb-32 px-4 bg-gradient-to-br from-[#1e3a8a] via-[#1d4ed8] to-[#14b8a6]">
         <div className="relative max-w-5xl mx-auto text-center">
           <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
-            Connect Talent with <br /> <span className="opacity-90">Opportunity</span>
+            Poveži talenat sa <br /> <span className="opacity-90">prilikom</span>
           </h1>
           <p className="text-lg md:text-xl text-blue-50 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-            The premier platform connecting students and alumni with companies for jobs, internships, and projects.
+            Spajamo studente i diplomce sa vodećim kompanijama. Pronađi svoj sledeći posao, praksu ili projekat danas.
           </p>
 
           <div className="relative max-w-2xl mx-auto">
@@ -184,7 +184,7 @@ export default function AdsPage() {
               </div>
               <button className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-3.5 rounded-xl font-bold transition-all flex items-center gap-2">
                 <SearchIcon />
-                <span className="hidden md:inline">Search</span>
+                <span className="hidden md:inline">Pretraži</span>
               </button>
             </div>
           </div>
@@ -196,12 +196,12 @@ export default function AdsPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-blue-900 tracking-tight mb-2">
-              Featured Opportunities
+              Istaknute mogućnosti
             </h2>
-            <p className="text-gray-500 font-medium">High-priority positions available now</p>
+            <p className="text-gray-500 font-medium">Pozicije visokog prioriteta dostupne sada</p>
           </div>
           <button className="px-6 py-2.5 border border-gray-200 rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all">
-            View All
+            Pogledaj sve
           </button>
         </div>
 
