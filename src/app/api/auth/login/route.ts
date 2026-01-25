@@ -9,11 +9,13 @@ export async function POST(req: Request) {
         const existingToken = cookieStore.get('token')?.value;
 
         if (existingToken) {
+            try {
             jwt.verify(existingToken, process.env.JWT_SECRET!);
             return NextResponse.json(
                 { message: "Vec ste ulogovani" },
                 { status: 400 }
             );
+            }catch{}
         }
         let body;
         try {
@@ -30,20 +32,23 @@ export async function POST(req: Request) {
             const company = await db.company.findUnique({ where: { companyId: user.id } });
             if (company && !company.isApproved) {
                 return NextResponse.json(
-                    { message: "Vaš nalog jos uvek nije odobren od strane administratora." },
+                    { message: "Vas nalog jos uvek nije odobren od strane administratora." },
                     { status: 403 }
                 );
             }
         }
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) return NextResponse.json({ message: "Pogresan email ili lozinka" }, { status: 401 });
-
+        const JWT_SECRET = process.env.JWT_SECRET;
+        if (!JWT_SECRET) {
+            throw new Error("JWT_SECRET nije definisan u .env");
+        }
         const token = jwt.sign({
             userId: user.id,
             email: user.email,
             role: user.role
         },
-            process.env.JWT_SECRET!,
+            JWT_SECRET,
             { expiresIn: "1d" }
         );
         const response = NextResponse.json(

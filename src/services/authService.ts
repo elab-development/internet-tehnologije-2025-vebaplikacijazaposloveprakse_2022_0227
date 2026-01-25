@@ -1,5 +1,7 @@
+import { AuthResponse, LoginData, RegisterData } from "../types/auth";
+
 export const authService = {
-  async login(data: any) {
+  async login(data: LoginData):Promise<AuthResponse> {
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -11,7 +13,7 @@ export const authService = {
     return result;
   },
 
-  async register(data: any) {
+  async register(data: RegisterData):Promise<AuthResponse> {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -24,8 +26,7 @@ export const authService = {
     return result;
   },
 
-  async logout() {
-    const res = await fetch("/api/auth/logout", { method: "POST" });
-    return res.json();
+  async logout(): Promise<void> {
+    await fetch("/api/auth/logout", { method: "POST" });
   }
 };
