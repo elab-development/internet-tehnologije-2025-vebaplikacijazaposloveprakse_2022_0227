@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 /**
- * 1. TYPES & MOCK DATA
+ * 1. TIPOV I MOCK PODACI (Srpska verzija)
  */
 interface Opportunity {
   id: string;
@@ -20,33 +21,33 @@ const OPPORTUNITIES: Opportunity[] = [
     id: '1',
     title: 'Junior Frontend Developer',
     company: 'TechCorp Solutions',
-    location: 'Belgrade',
-    type: 'Full-time',
+    location: 'Beograd',
+    type: 'Puno radno vreme',
     skills: ['React', 'Next.js', 'Tailwind'],
-    postedAt: '2 days ago',
+    postedAt: 'pre 2 dana',
   },
   {
     id: '2',
-    title: 'Marketing Intern',
+    title: 'Marketing Praktikant',
     company: 'Creative Agency',
-    location: 'Remote',
-    type: 'Internship',
+    location: 'Daljinski (Remote)',
+    type: 'Praksa',
     skills: ['SEO', 'Copywriting', 'Analytics'],
-    postedAt: '1 day ago',
+    postedAt: 'pre 1 dan',
   },
   {
     id: '3',
-    title: 'Data Analysis Student Project',
+    title: 'Studentski projekat analize podataka',
     company: 'DataTech Labs',
     location: 'Novi Sad',
-    type: 'Student Project',
+    type: 'Studentski projekat',
     skills: ['Python', 'SQL', 'Pandas'],
-    postedAt: '3 hours ago',
+    postedAt: 'pre 3 sata',
   },
 ];
 
 /**
- * 2. ICONS
+ * 2. IKONICE
  */
 const LogoIcon = () => (
   <svg className="w-8 h-8 text-teal-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -72,31 +73,31 @@ const SearchIcon = () => (
 );
 
 /**
- * 3. SUB-COMPONENTS
+ * 3. POMOĆNE KOMPONENTE (Navbar i Kartica)
  */
 const Navbar = () => (
   <nav className="fixed top-0 w-full bg-white z-50 border-b border-gray-100">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex justify-between items-center h-20">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <LogoIcon />
           <span className="text-2xl font-bold text-blue-900 tracking-tight">Career Hub</span>
-        </div>
+        </Link>
 
-        {/* Links */}
+        {/* Linkovi na srpskom */}
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Početna</a>
-          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Za studente</a>
-          <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Za kompanije</a>
+          <Link href="/o-nama" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">O nama</Link>
+          <Link href="/za-studente" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Za studente</Link>
+          <Link href="/za-kompanije" className="text-gray-600 hover:text-blue-600 font-medium transition-colors">Za kompanije</Link>
         </div>
 
-        {/* Auth Buttons */}
         <div className="flex items-center space-x-4">
-          <button className="text-gray-900 font-bold hover:text-blue-600 px-4 py-2 transition-colors">Prijava</button>
-          <button className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all shadow-md active:scale-95">
+          <Link href="/login" className="text-gray-900 font-bold hover:text-blue-600 px-4 py-2 transition-colors">
+            Prijava
+          </Link>
+          <Link href="/register" className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 py-2.5 rounded-lg transition-all shadow-md active:scale-95">
             Registracija
-          </button>
+          </Link>
         </div>
       </div>
     </div>
@@ -149,7 +150,7 @@ const OpportunityCard = ({ item }: { item: Opportunity }) => (
 );
 
 /**
- * 4. MAIN PAGE COMPONENT
+ * 4. GLAVNA STRANICA
  */
 export default function AdsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -158,14 +159,14 @@ export default function AdsPage() {
     <div className="min-h-screen bg-gray-50/30">
       <Navbar />
 
-      {/* HERO SECTION */}
+      {/* HERO SEKCIJA */}
       <section className="relative w-full pt-40 pb-20 md:pt-48 md:pb-32 px-4 bg-gradient-to-br from-[#1e3a8a] via-[#1d4ed8] to-[#14b8a6]">
         <div className="relative max-w-5xl mx-auto text-center">
           <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
-            Poveži talenat sa <br /> <span className="opacity-90">prilikom</span>
+            Poveži talenat sa <br /> <span className="text-teal-200">prilikom</span>
           </h1>
           <p className="text-lg md:text-xl text-blue-50 mb-12 max-w-2xl mx-auto font-light leading-relaxed">
-            Spajamo studente i diplomce sa vodećim kompanijama. Pronađi svoj sledeći posao, praksu ili projekat danas.
+            Vodeća platforma koja spaja studente i diplomce sa kompanijama radi posla, praksi i projekata.
           </p>
 
           <div className="relative max-w-2xl mx-auto">
@@ -178,30 +179,30 @@ export default function AdsPage() {
                   type="text" 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search for jobs, internships, or projects..." 
-                  className="w-full py-3.5 px-3 text-gray-700 focus:outline-none bg-transparent text-base"
+                  placeholder="Pretraži poslove, kompanije ili veštine..." 
+                  className="w-full py-3.5 px-3 text-gray-700 focus:outline-none bg-transparent text-lg"
                 />
               </div>
-              <button className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-3.5 rounded-xl font-bold transition-all flex items-center gap-2">
+              <button className="hidden md:flex bg-blue-600 hover:bg-blue-700 text-white px-10 py-3.5 rounded-xl font-bold transition-all shadow-lg active:scale-95 items-center gap-2">
                 <SearchIcon />
-                <span className="hidden md:inline">Pretraži</span>
+                Pretraži
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FEATURED OPPORTUNITIES */}
+      {/* AKTUELNI OGLASI */}
       <section className="max-w-7xl mx-auto py-24 px-6 md:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold text-blue-900 tracking-tight mb-2">
-              Istaknute mogućnosti
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+              Aktuelni oglasi
             </h2>
-            <p className="text-gray-500 font-medium">Pozicije visokog prioriteta dostupne sada</p>
+            <p className="text-gray-500 mt-2">Prioritetne pozicije dostupne odmah</p>
           </div>
-          <button className="px-6 py-2.5 border border-gray-200 rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all">
-            Pogledaj sve
+          <button className="px-6 py-3 border-2 border-gray-100 rounded-xl text-sm font-bold text-gray-700 hover:border-blue-600 hover:text-blue-600 transition-all">
+            Pogledaj sve oglase
           </button>
         </div>
 
@@ -214,6 +215,5 @@ export default function AdsPage() {
     </div>
   );
 }
-
 
 
