@@ -1,9 +1,9 @@
 import * as z from "zod";
 import { StudentStatus } from "@prisma/client";
 export const UpdateUserSchema = z.object({
-  firstName: z.string().min(2, { error: "Ime je obavezno" }),
-  lastName: z.string().min(2, { error: "Prezime je obavezno" }),
-  phone: z.string().min(2, { error: "Telefon je obavezan" }),
+  firstName: z.string().min(2, { error: "Ime je obavezno" }).optional(),
+  lastName: z.string().min(2, { error: "Prezime je obavezno" }).optional(),
+  phone: z.string().min(2, { error: "Telefon je obavezan" }).optional(),
 
   companyName: z.string().optional(),
   taxNumber: z.string().optional(),
