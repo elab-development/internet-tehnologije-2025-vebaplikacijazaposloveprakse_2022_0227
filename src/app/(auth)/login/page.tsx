@@ -7,11 +7,13 @@ import { Mail, Lock, ArrowRight, ArrowLeft, CircleX, CheckCircle2 } from "lucide
 import { authService } from "@/src/services/authService";
 import { useRouter } from "next/navigation";
 import { LoginSchema } from "@/src/lib/validators/auth";
+import { useAuth } from "@/src/context/AuthContext";
 
 export default function LoginPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const isSuccess = searchParams.get("success");
+    const { refetch } = useAuth();
     //--------------------------------------------//
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -30,6 +32,7 @@ export default function LoginPage() {
         }
         try {
             await authService.login(validatedData.data);
+            await refetch();
             router.push("/");
         } catch (err) {
             setError(err instanceof Error ? err.message : "Doslo je do greske tokom prijave.");
