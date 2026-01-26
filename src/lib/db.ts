@@ -10,7 +10,7 @@ const adapter = new PrismaPg(pool);
 
 export const db =
   globalForPrisma.prisma ||
-  new PrismaClient({ adapter });
+  new PrismaClient({ adapter, log: process.env.NODE_ENV === "development" ? ["query", "error"] : ["error"] });
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = db;
