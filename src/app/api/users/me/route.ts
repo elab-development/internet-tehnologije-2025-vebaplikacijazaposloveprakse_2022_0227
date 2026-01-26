@@ -1,19 +1,17 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import jwt from "jsonwebtoken";
 import { db } from "@/src/lib/db";
 import { UpdateUserData } from "@/src/types/user";
-import { getUserFromToken } from "@/src/lib/authHelper";
 import { UpdateUserSchema } from "@/src/lib/validators/user";
 import { Role } from "@prisma/client";
-export async function GET() {
+import { getUserFromRequest } from "@/src/lib/requestHelper";
+export async function GET(req: Request) {
   try {
-    const decoded = await getUserFromToken();
-    if (!decoded) {
+    const user = getUserFromRequest(req);
+    if (!user) {
       return NextResponse.json({ message: "Niste ulogovani" }, { status: 401 });
     }
     const userData = await db.user.findUnique({
-      where: { id: decoded.userId },
+      where: { id: user.id },
       select: {
         id: true,
         firstName: true,
@@ -50,11 +48,9 @@ export async function GET() {
 }
 export async function PUT(req: Request) {
   try {
-    const decoded = await getUserFromToken();
+    const user = getUserFromRequest(req);
 
-    if (!decoded) {
-      return NextResponse.json({ message: "Niste ulogovani" }, { status: 401 });
-    }
+    if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     let body: UpdateUserData;
     try {
       body = await req.json();
@@ -74,12 +70,12 @@ export async function PUT(req: Request) {
       companyName, taxNumber, regNumber, industry, website, location // polja za firmu
     } = validationData.data;
     const updatedUser = await db.user.update({
-      where: { id: decoded.userId },
+      where: { id: user.id },
       data: {
         firstName: firstName || undefined,
         lastName: lastName || undefined,
         phone: phone || undefined,
-        ...(decoded.role === Role.STUDENT && {
+        ...(user.role === Role.STUDENT && {
           studentProfile: {
             update: {
               studentIndex: studentIndex || undefined,
@@ -88,7 +84,7 @@ export async function PUT(req: Request) {
             },
           },
         }),
-        ...(decoded.role === Role.COMPANY && {
+        ...(user.role === Role.COMPANY && {
           companyProfile: {
             update: {
               companyName: companyName || undefined,
