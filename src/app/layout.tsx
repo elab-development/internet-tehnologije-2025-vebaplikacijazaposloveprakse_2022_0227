@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Navbar from "../components/Navbar";
 
 
 export const metadata: Metadata = {
@@ -20,7 +21,10 @@ export default function RootLayout({
       <body
         className={`antialiased`}
       >
-        {children}
+        <Navbar />
+        <main className="pt-20 min-h-screen">
+          {children}
+        </main>
       </body>
     </html>
   );
