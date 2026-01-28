@@ -1,5 +1,6 @@
 import { db } from "@/src/lib/db";
 import { CreateAdSchema } from "@/src/lib/validators/ad";
+import { Role } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -28,17 +29,21 @@ export async function GET() {
 }
 export async function POST(request: Request) {
   try {
-    const user = request.headers.get("x-user-id");
-    if (!user)return NextResponse.json({ message: "Morate biti ulogovani da biste izvrsili ovu akciju" }, { status: 401 });
+    const userID = request.headers.get("x-user-id");
+    const userRole = request.headers.get("x-user-role");
+    if (!userID) return NextResponse.json({ message: "Morate biti ulogovani da biste izvrsili ovu akciju" }, { status: 401 });
+    if (userRole !== Role.COMPANY) {
+      return NextResponse.json({ message: "Samo kompanije mogu kreirati oglase" }, { status: 403 });
+    }
     const body = await request.json();
-    if(!body) return NextResponse.json({ message: "Nedostaje telo zahteva" }, { status: 400 });
+    if (!body) return NextResponse.json({ message: "Nedostaje telo zahteva" }, { status: 400 });
     const validation = CreateAdSchema.safeParse(body);
     if (!validation.success) {
-        const firstErrorMessage = validation.error.issues[0]?.message || "Validacija nije uspela";
-        return NextResponse.json({
-            message: firstErrorMessage,
-            errors: validation.error.issues
-        }, { status: 400 });
+      const firstErrorMessage = validation.error.issues[0]?.message || "Validacija nije uspela";
+      return NextResponse.json({
+        message: firstErrorMessage,
+        errors: validation.error.issues
+      }, { status: 400 });
     }
     const { title, description, requirements, location, deadline, jobType } = body;
     const newAd = await db.ad.create({
@@ -50,7 +55,7 @@ export async function POST(request: Request) {
         deadline: new Date(deadline),
         jobType,
         status: "ACTIVE",
-        companyId: parseInt(user),
+        companyId: parseInt(userID),
       },
     });
     return NextResponse.json({ message: "Oglas uspesno kreiran", ad: newAd }, { status: 201 });

@@ -46,8 +46,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         errors: validation.error.issues
       }, { status: 400 });
     }
-    const user = req.headers.get("x-user-id");
-    if (!user) return NextResponse.json({ message: "Morate biti ulogovani da biste izvrsili ovu akciju" }, { status: 401 });
+    const userId = req.headers.get("x-user-id");
+    if (!userId) return NextResponse.json({ message: "Morate biti ulogovani da biste izvrsili ovu akciju" }, { status: 401 });
     const { id } = await params;
     const adId = parseInt(id);
     if (isNaN(adId)) {
@@ -58,7 +58,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       select: { companyId: true }
     });
     if (!ad) return NextResponse.json({ message: "Oglas nije nadjen" }, { status: 404 });
-    if (ad.companyId !== parseInt(user)) {
+    if (ad.companyId !== parseInt(userId)) {
       return NextResponse.json({ message: "Mozete menjati samo svoje oglase" }, { status: 403 });
     }
     const { title, description, requirements, location, deadline, jobType } = body;
