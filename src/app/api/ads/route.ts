@@ -53,7 +53,7 @@ export async function POST(request: Request) {
         companyId: parseInt(user),
       },
     });
-    return NextResponse.json(newAd, { status: 201 });
+    return NextResponse.json({ message: "Oglas uspesno kreiran", ad: newAd }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ message: "Greska pri kreiranju oglasa" }, { status: 500 });
   }

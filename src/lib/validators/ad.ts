@@ -24,3 +24,4 @@ export const CreateAdSchema = z.object({
 
   jobType: z.enum(JobType),
 });
+export const UpdateAdSchema = CreateAdSchema.partial();
