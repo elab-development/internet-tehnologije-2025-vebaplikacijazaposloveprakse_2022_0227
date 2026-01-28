@@ -29,7 +29,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const user = request.headers.get("x-user-id");
-    if (!user)return NextResponse.json({ message: "Niste autorizovani (samo kompanije mogu da prave oglase)" }, { status: 401 });
+    if (!user)return NextResponse.json({ message: "Morate biti ulogovani da biste izvrsili ovu akciju" }, { status: 401 });
     const body = await request.json();
     if(!body) return NextResponse.json({ message: "Nedostaje telo zahteva" }, { status: 400 });
     const validation = CreateAdSchema.safeParse(body);
