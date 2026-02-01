@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { LogIn, Building2, BriefcaseBusiness, Info, LogOut } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar() {
     const { user, loading, logout } = useAuth();
@@ -39,7 +39,7 @@ export default function Navbar() {
                         </div>
                         <div className="flex items-center gap-2 group cursor-pointer h-full">
                             <Info size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
-                            <Link href="/o-nama" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
+                            <Link href="/aboutus" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
                                 O nama
                             </Link>
                         </div>

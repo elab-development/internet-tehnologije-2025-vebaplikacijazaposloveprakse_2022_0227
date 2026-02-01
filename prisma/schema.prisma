@@ -49,6 +49,7 @@ model Student {
     studentIndex String @unique
     status StudentStatus @default(STUDYING)
     profileDescription String?
+    cvUrl String?
     applications JobApplication[]
     savedAds SavedAd[]
 }
@@ -61,6 +62,7 @@ model Company {
     industry String
     website String
     location String
+    logoUrl String?
     isApproved    Boolean   @default(false)
     ads  Ad[]
 }
