@@ -16,6 +16,9 @@ export default function CompaniesSection() {
             />
           </div>
         </div>
+        <button className="bg-[#2bc3c3] text-[#1a3a94] font-extrabold px-12 py-4 rounded-full uppercase text-xs tracking-[0.2em] hover:bg-[#1a3a94] hover:text-white transition-all shadow-lg shadow-[#2bc3c3]/20">
+          Pridružite se
+        </button>
       </div>
     </section>
   );
