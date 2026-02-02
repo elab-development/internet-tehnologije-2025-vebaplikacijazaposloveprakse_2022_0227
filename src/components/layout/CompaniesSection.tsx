@@ -1,10 +1,11 @@
-import Image from 'next/image'; 
-import Link from "next/link";
+import React from 'react';
+import { CompanyCard } from './CompanyCard';
+
 const companies = [
-  { id: 1, name: "Partner 1" },
-  { id: 2, name: "Partner 2" },
-  { id: 3, name: "Partner 3" },
-  { id: 4, name: "Partner 4" },
+  { id: 1, name: "Partner 1", logo: "/Logo.jpg" },
+  { id: 2, name: "Partner 2", logo: "/Logo.jpg" },
+  { id: 3, name: "Partner 3", logo: "/Logo.jpg" },
+  { id: 4, name: "Partner 4", logo: "/Logo.jpg" },
 ];
 
 export default function CompaniesSection() {
@@ -16,28 +17,20 @@ export default function CompaniesSection() {
           Naši <span className="text-[#2bc3c3]">Partneri</span>
         </h2>
 
+        {/* Ovde se dešava magija: map prolazi kroz listu i za svakog crta CompanyCard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
           {companies.map((company) => (
-            <div 
+            <CompanyCard 
               key={company.id} 
-              className="bg-white aspect-square flex items-center justify-center p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group relative"
-            >
-              {/* 2. Koristimo Image sa layoutom ili fiksnim dimenzijama */}
-              <div className="relative w-full h-full">
-                <Image 
-                  src="/Logo.jpg" 
-                  alt={company.name} 
-                  fill // Popunjava roditeljski div
-                  className="object-contain grayscale group-hover:grayscale-0 transition-all duration-300 p-2"
-                />
-              </div>
-            </div>
+              name={company.name} 
+              logo={company.logo} 
+            />
           ))}
         </div>
-        
-        <Link href="/register?role=company" className="cursor-pointer bg-[#2bc3c3] text-[#1a3a94] font-black px-12 py-4 rounded-full uppercase text-xs tracking-widest hover:bg-[#1a3a94] hover:text-white transition-all shadow-lg shadow-[#2bc3c3]/20">
-          Postanite partner
-        </Link>
+
+        <button className="bg-[#2bc3c3] text-[#1a3a94] font-black px-12 py-4 rounded-full uppercase text-xs tracking-widest hover:bg-[#1a3a94] hover:text-white transition-all shadow-lg">
+          Postani partner
+        </button>
 
       </div>
     </section>
