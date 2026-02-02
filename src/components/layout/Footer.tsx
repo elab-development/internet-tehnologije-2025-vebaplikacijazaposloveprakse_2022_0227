@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="bg-[#1a3a94] text-white py-16 px-6 border-t border-white/10">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
         
-        {/* Kolona 1: Logo i opis (Prvi deo koda) */}
+        {/* Kolona 1: Logo i opis */}
         <div className="space-y-6">
           <div className="bg-white p-3 inline-block rounded-xl shadow-lg">
             <Image src="/Logo.jpg" alt="Career Hub Logo" width={130} height={50} className="object-contain" />
@@ -16,7 +16,7 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Kolona 2: Meni (Drugi deo koda) */}
+        {/* Kolona 2: Meni */}
         <div className="space-y-6">
           <h4 className="text-[#2bc3c3] font-bold uppercase tracking-widest text-xs">Meni</h4>
           <ul className="space-y-4 text-sm font-medium">
@@ -27,6 +27,7 @@ export default function Footer() {
           </ul>
         </div>
 
+        {/* Kolona 3: Kontakt */}
         <div className="space-y-6">
           <h4 className="text-[#2bc3c3] font-bold uppercase tracking-widest text-xs">Kontakt</h4>
           <div className="space-y-4 text-sm">
@@ -44,12 +45,10 @@ export default function Footer() {
         </div>
       </div> 
 
-      
+      {/* Donja Copyright Traka */}
       <div className="container mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] text-white/30 font-bold uppercase tracking-[0.2em]">
         <p>© 2026 CAREER HUB. SVA PRAVA ZADRŽANA.</p>
         <p className="mt-4 md:mt-0 opacity-50">Design & Development by Career Hub Team</p>
-      </div>
-
       </div>
     </footer>
   );
