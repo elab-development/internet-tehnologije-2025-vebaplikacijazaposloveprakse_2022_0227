@@ -1,5 +1,5 @@
 import Image from 'next/image'; 
-
+import Link from "next/link";
 const companies = [
   { id: 1, name: "Partner 1" },
   { id: 2, name: "Partner 2" },
@@ -34,10 +34,10 @@ export default function CompaniesSection() {
             </div>
           ))}
         </div>
-
-        <button className="bg-[#2bc3c3] text-[#1a3a94] font-black px-12 py-4 rounded-full uppercase text-xs tracking-widest hover:bg-[#1a3a94] hover:text-white transition-all shadow-lg shadow-[#2bc3c3]/20">
-          Postani partner
-        </button>
+        
+        <Link href="/register?role=company" className="cursor-pointer bg-[#2bc3c3] text-[#1a3a94] font-black px-12 py-4 rounded-full uppercase text-xs tracking-widest hover:bg-[#1a3a94] hover:text-white transition-all shadow-lg shadow-[#2bc3c3]/20">
+          Postanite partner
+        </Link>
 
       </div>
     </section>

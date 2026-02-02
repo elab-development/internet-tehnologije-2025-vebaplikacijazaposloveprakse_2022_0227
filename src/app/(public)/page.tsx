@@ -8,7 +8,7 @@ import { adService } from "@/src/services/adService";
 import { Ad } from "@/src/types/ad";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import CompaniesSection from "@/src/components/CompaniesSection";
+import CompaniesSection from "@/src/components/layout/CompaniesSection";
 
 
 export default function AdsPage() {
