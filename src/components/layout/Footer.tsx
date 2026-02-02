@@ -27,7 +27,28 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* OVDE ĆEŠ SADA DODATI TREĆI DEO KOJI TI NEDOSTAJE */}
+        <div className="space-y-6">
+          <h4 className="text-[#2bc3c3] font-bold uppercase tracking-widest text-xs">Kontakt</h4>
+          <div className="space-y-4 text-sm">
+            <div className="flex flex-col">
+              <span className="text-white/40 text-[10px] uppercase font-black tracking-widest">Lokacija</span>
+              <p className="font-semibold text-white/90">Jove Ilića 154, Beograd</p>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-white/40 text-[10px] uppercase font-black tracking-widest">E-mail</span>
+              <a href="mailto:office@careerhub.rs" className="font-semibold text-white hover:text-[#2bc3c3] transition-colors">
+                office@careerhub.rs
+              </a>
+            </div>
+          </div>
+        </div>
+      </div> 
+
+      
+      <div className="container mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] text-white/30 font-bold uppercase tracking-[0.2em]">
+        <p>© 2026 CAREER HUB. SVA PRAVA ZADRŽANA.</p>
+        <p className="mt-4 md:mt-0 opacity-50">Design & Development by Career Hub Team</p>
+      </div>
 
       </div>
     </footer>
