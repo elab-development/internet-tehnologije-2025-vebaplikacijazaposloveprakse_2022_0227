@@ -7,6 +7,15 @@ export default function CompaniesSection() {
         <h2 className="text-[#1a3a94] text-3xl md:text-5xl font-black uppercase tracking-tighter mb-12">
           Kompanije na platformi <span className="text-[#2bc3c3]">Career Hub</span>
         </h2>
+        <div className="flex justify-center items-center mb-12">
+          <div className="bg-white p-8 rounded-3xl shadow-xl shadow-blue-900/5 border border-gray-100 transition-transform hover:scale-105 duration-300">
+            <img 
+              src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Belgrade_Airport_Logo.svg" 
+              alt="Belgrade Airport" 
+              className="h-12 md:h-16 object-contain"
+            />
+          </div>
+        </div>
       </div>
     </section>
   );
