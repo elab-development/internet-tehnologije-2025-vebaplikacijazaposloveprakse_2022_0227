@@ -4,7 +4,7 @@ import { jwtVerify } from 'jose';
 import { Role } from '@prisma/client';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
-const authRoutes = ['/login', '/register'];
+const authRoutes = ['/api/auth/login', '/api/auth/register'];
 interface JWTPayload {
     userId: number;
     role: 'ADMIN' | 'COMPANY' | 'STUDENT';
@@ -25,11 +25,12 @@ export async function proxy(req: NextRequest) {
         }
     }
     const isAuthRoute = authRoutes.includes(pathname);
+
     if (isAuthRoute && payload) {
         return NextResponse.redirect(new URL('/', req.url));
     }
-    const isPublicRoute = pathname.startsWith('/api/ads') && req.method === 'GET';
-    if (!isPublicRoute && pathname.startsWith('/api/')) {
+    const isPublicApi =(pathname.startsWith('/api/ads') && req.method === 'GET') ||isAuthRoute;
+    if (!isPublicApi && pathname.startsWith('/api/')) {
         if (!payload) {
             return NextResponse.json({
                 message: 'Morate biti ulogovani'
