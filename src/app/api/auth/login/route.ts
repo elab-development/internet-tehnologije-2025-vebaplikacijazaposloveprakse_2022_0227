@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
 import { db } from "@/src/lib/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         const cookieStore = await cookies();
         const existingToken = cookieStore.get('token')?.value;

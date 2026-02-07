@@ -8,7 +8,8 @@ export interface Company {
     industry: string;
     website: string;
     location: string;
-    isApproved: boolean;    
+    isApproved: boolean;   
+    rejectReason?: string | null; 
     user?: {
         email: string;
         firstName: string;

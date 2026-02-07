@@ -1,9 +1,9 @@
 import { db } from "@/src/lib/db";
 import { UpdateAdSchema } from "@/src/lib/validators/ad";
 import { Role } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const adId = parseInt(id);
@@ -34,7 +34,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   }
 }
 
-export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const body = await req.json();
     if (!body) return NextResponse.json({ message: "Nedostaje telo zahteva" }, { status: 400 });
@@ -79,7 +79,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json({ message: "Greska pri azuriranju oglasa" }, { status: 500 });
   }
 }
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const userRole = req.headers.get("x-user-role");
     const userId = req.headers.get("x-user-id");
