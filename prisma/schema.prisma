@@ -38,7 +38,8 @@ model User {
     lastName String
     phone String?
     role Role @default(STUDENT)
-    banned Boolean @default(false)
+    isBanned Boolean @default(false)
+    banReason String?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     studentProfile Student?
