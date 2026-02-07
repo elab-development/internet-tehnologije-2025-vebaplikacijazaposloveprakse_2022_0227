@@ -14,7 +14,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         const targetUserId = parseInt(id);
         if (isNaN(targetUserId)) return NextResponse.json({ message: "Nevalidan ID" }, { status: 400 });
         if (targetUserId === parseInt(userId)) return NextResponse.json({ message: "Ne mozete menjati sami sebe" }, { status: 400 });
-        const { banReason, isBanned, isApproved } = await req.json();
+        const { banReason, isBanned, isApproved, rejectReason} = await req.json();
         const targetUser = await db.user.findUnique({
             where: { id: targetUserId },
             select: { role: true }
@@ -25,7 +25,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             where: { id: targetUserId },
             data: {
                 ...(isApproved !== undefined && { isApproved }),
-                ...(isBanned !== undefined && { banned: isBanned }),
+                ...(isApproved === false && rejectReason && { rejectReason }),
+                ...(isApproved === true && { rejectReason: null }),
+                ...(isBanned !== undefined && { isBanned: isBanned }),
                 ...(isBanned === true && { banReason: banReason || "Prekrsaj pravila platforme" }),
                 ...(isBanned === false && { banReason: null })
             }

@@ -66,6 +66,7 @@ model Company {
     location String
     logoUrl String?
     isApproved    Boolean   @default(false)
+    rejectReason  String?
     ads  Ad[]
 }
 model Ad {
