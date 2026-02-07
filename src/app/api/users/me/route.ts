@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/src/lib/db";
 import { UpdateUserData } from "@/src/types/user";
 import { UpdateUserSchema } from "@/src/lib/validators/user";
 import { Role } from "@prisma/client";
 import { getUserFromRequest } from "@/src/lib/requestHelper";
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     const user = getUserFromRequest(req);
     if (!user) {

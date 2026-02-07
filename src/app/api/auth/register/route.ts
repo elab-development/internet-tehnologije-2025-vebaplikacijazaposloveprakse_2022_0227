@@ -1,9 +1,9 @@
 import { db } from "@/src/lib/db";
 import { PrismaClient, Role } from "@prisma/client";
 import { RegisterSchema } from "@/src/lib/validators/auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         let body;
         try {

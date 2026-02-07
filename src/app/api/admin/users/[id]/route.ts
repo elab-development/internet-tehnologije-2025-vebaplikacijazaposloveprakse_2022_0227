@@ -1,10 +1,10 @@
 import { db } from "@/src/lib/db";
 import { Role } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 
 //-----------BAN/UNBAN USER AND APPROVED COMPANY-----------//
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const userId = req.headers.get("x-user-id");
         if (!userId) return NextResponse.json({ message: "Morate biti ulogovani da biste izvrsili ovu akciju" }, { status: 401 });
@@ -39,7 +39,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 //-----------DELETE USER-----------//
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const userId = req.headers.get("x-user-id");
         if (!userId) return NextResponse.json({ message: "Morate biti ulogovani da biste izvrsili ovu akciju" }, { status: 401 });

@@ -1,8 +1,8 @@
 import { db } from "@/src/lib/db";
 import { ApplicationStatus, JobStatus, Role } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: Request,{ params }: { params: Promise<{ id: string }> }) {
+export async function POST(req: NextRequest,{ params }: { params: Promise<{ id: string }> }) {
     try {
         const userId = req.headers.get("x-user-id");
         if (!userId) return NextResponse.json({ message: "Morate biti ulogovani da biste izvrsili ovu akciju" }, { status: 401 });
@@ -33,7 +33,7 @@ export async function POST(req: Request,{ params }: { params: Promise<{ id: stri
         return NextResponse.json({ message: error instanceof Error ? error.message : "Greska pri apliciranju na oglas" }, { status: 500 });
     }
 }
-export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const userId = req.headers.get("x-user-id");
         if (!userId) return NextResponse.json({ message: "Morate biti ulogovani da biste izvrsili ovu akciju" }, { status: 401 });
@@ -64,7 +64,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         return NextResponse.json({ message: error instanceof Error ? error.message : "Greska pri azuriranju prijave" }, { status: 500 });
     }
 }
-export async function DELETE(req: Request, {params}: {params:Promise<{id:string}>}) {
+export async function DELETE(req: NextRequest, {params}: {params:Promise<{id:string}>}) {
     try {
         const userId = req.headers.get("x-user-id");
         if(!userId) return NextResponse.json({ message: "Morate biti ulogovani da biste izvrsili ovu akciju" }, { status: 401 });
