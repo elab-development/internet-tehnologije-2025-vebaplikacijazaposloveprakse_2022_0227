@@ -1,3 +1,4 @@
+import { Role } from "@prisma/client";
 import { NextRequest } from "next/server";
 
 export function getUserFromRequest(req: Request | NextRequest) {
@@ -10,6 +11,6 @@ export function getUserFromRequest(req: Request | NextRequest) {
 
     return {
         id: parseInt(userId),
-        role: userRole as 'STUDENT' | 'COMPANY' | 'ADMIN'
+        role: userRole as Role
     };
 }

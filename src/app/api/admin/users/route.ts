@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
                 { companyProfile: { companyName: { contains: query, mode: 'insensitive' } } },
             ];
         }
-        if(role)filter.role = role;
+        if(role)filter.role = role as Role;
         if(isBanned !== null) filter.isBanned = isBanned === "true";
         if(isApproved !== null) filter.companyProfile = { isApproved: isApproved === "true" };
         const users = await db.user.findMany({
