@@ -24,12 +24,11 @@ export async function proxy(req: NextRequest) {
 
         }
     }
-    const isAuthRoute = authRoutes.includes(pathname);
-
-    if (isAuthRoute && payload) {
+    const isAuthPage = ['/login', '/register'].includes(pathname);
+    if (isAuthPage && payload) {
         return NextResponse.redirect(new URL('/', req.url));
     }
-    const isPublicApi =(pathname.startsWith('/api/ads') && req.method === 'GET') ||isAuthRoute;
+    const isPublicApi =(pathname.startsWith('/api/ads') && req.method === 'GET') ||isAuthPage;
     if (!isPublicApi && pathname.startsWith('/api/')) {
         if (!payload) {
             return NextResponse.json({

@@ -59,9 +59,9 @@ export async function POST(req: NextRequest) {
             if (existingStudent) return NextResponse.json({ message: "Student sa ovim brojem indeksa vec postoji." }, { status: 409 });
         }
         const hashedPassword = await bcrypt.hash(password, 12);
-        await db.$transaction(async (prisma) => {
+        await db.$transaction(async (tx) => {
             const userRole = role === Role.COMPANY ? Role.COMPANY : Role.STUDENT;
-            const newUser = await prisma.user.create({
+            const newUser = await tx.user.create({
                 data: {
                     email,
                     firstName,
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
                 }
             });
             if (userRole === Role.COMPANY) {
-                await prisma.company.create({
+                await tx.company.create({
                     data: {
                         companyId: newUser.id,
                         companyName: companyName!,
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
                     }
                 });
             } else if (userRole === Role.STUDENT) {
-                await prisma.student.create({
+                await tx.student.create({
                     data: {
                         studentId: newUser.id,
                         studentIndex: studentIndex!,
@@ -98,7 +98,6 @@ export async function POST(req: NextRequest) {
         });
         return NextResponse.json({ message: "Uspesna registracija!" }, { status: 201 });
     } catch (error) {
-        console.error(error);
         return NextResponse.json({ message: "Greska na serveru" }, { status: 500 });
     }
 }

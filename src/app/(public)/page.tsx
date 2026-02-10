@@ -6,12 +6,10 @@ import { OpportunityCard } from "@/src/components/ads/OpportunityCard";
 import { SectionHeader } from "@/src/components/ui/SectionHeader";
 import { adService } from "@/src/services/adService";
 import { Ad } from "@/src/types/ad";
-import { AlertCircle, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import CompaniesSection from "@/src/components/layout/CompaniesSection";
 
-
-export default function AdsPage() {
+export default function Homepage() {
   const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);

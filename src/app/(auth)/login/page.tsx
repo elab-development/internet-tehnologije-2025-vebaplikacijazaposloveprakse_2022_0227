@@ -12,7 +12,7 @@ import { useAuth } from "@/src/context/AuthContext";
 export default function LoginPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const isSuccess = searchParams.get("success");
+    const isSuccess = searchParams.get("registered") === "success";
     const { refetch } = useAuth();
     //--------------------------------------------//
     const [loading, setLoading] = useState(false);

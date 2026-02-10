@@ -3,6 +3,7 @@ import { db } from "@/src/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
+import { Role } from "@prisma/client";
 export async function POST(req: NextRequest) {
     try {
         const cookieStore = await cookies();
@@ -28,7 +29,7 @@ export async function POST(req: NextRequest) {
             where: { email }
         });
         if (!user) return NextResponse.json({ message: "Pogresan email ili lozinka" }, { status: 401 });
-        if (user.role === "COMPANY") {
+        if (user.role === Role.COMPANY) {
             const company = await db.company.findUnique({ where: { companyId: user.id } });
             if (company && !company.isApproved) {
                 return NextResponse.json(

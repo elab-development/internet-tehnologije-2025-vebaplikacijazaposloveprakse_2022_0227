@@ -41,7 +41,7 @@ export default function RegisterPage() {
         }
         try {
             await authService.register(validatedData.data);
-            router.push("/login?registered=true");
+            router.push("/login?registered=success");
         } catch (err) {
             setError(err instanceof Error ? err.message : "Doslo je do greske tokom registracije.");
         } finally {
