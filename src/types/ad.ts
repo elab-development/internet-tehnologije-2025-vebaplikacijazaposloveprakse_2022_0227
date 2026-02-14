@@ -13,6 +13,7 @@ export interface Ad {
     status: JobStatus;
     jobType: JobType;
 
+    hasApplied?: boolean;
     createdAt: Date | string;
     updatedAt: Date | string;
     _count?: {

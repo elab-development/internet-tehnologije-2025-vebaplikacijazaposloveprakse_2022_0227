@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { adService } from '@/src/services/adService';
 import { LoadingState } from '@/src/components/ui/LoadingState';
 import { ErrorState } from '@/src/components/ui/ErrorState';
+import { applicationService } from '@/src/services/applicationService';
 
 export default function AdDetailsPage() {
   const params = useParams();
@@ -19,6 +20,9 @@ export default function AdDetailsPage() {
       try {
         const res = await adService.getAdById(Number(adId));
         setAd(res);
+        if (res.hasApplied) {
+          setApplied(true);
+        }
         setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Greska pri dobavljanju oglasa");
@@ -28,6 +32,17 @@ export default function AdDetailsPage() {
     };
     fetchAd();
   }, [adId]);
+  const handleApply = async () => {
+    setIsApplying(true);
+    try {
+      await applicationService.applyToAd(Number(adId));
+      setApplied(true);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Greska pri prijavljivanju na oglas");
+    } finally {
+      setIsApplying(false);
+    }
+  };
   const getStatusLabel = (status: string) => status === JobStatus.ACTIVE ? 'Aktivan' : 'Zatvoren';
   const getJobTypeLabel = (type: string) => type === JobType.INTERNSHIP ? 'Praksa' : 'Posao';
   const formatDate = (date: Date | string) => {
@@ -265,6 +280,7 @@ export default function AdDetailsPage() {
                 Zainteresovani ste za ovu poziciju? Aplicirajte odmah!
               </p>
               <button
+                onClick={handleApply}
                 disabled={isApplying}
                 className={`w-full md:w-auto px-8 py-3 rounded-lg font-semibold transition-colors ${isApplying
                   ? 'bg-[#1a3a94]/60 cursor-not-allowed'
