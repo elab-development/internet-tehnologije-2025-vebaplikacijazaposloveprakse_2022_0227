@@ -5,8 +5,9 @@ export interface Company {
     companyName: string;
     taxNumber: string;
     regNumber: string;
+    description?: string;
     industry: string;
-    website: string;
+    website?: string;
     location: string;
     isApproved: boolean;   
     rejectReason?: string | null; 

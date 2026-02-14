@@ -62,7 +62,8 @@ model Company {
     taxNumber String @unique
     regNumber String @unique
     industry String
-    website String
+    website String?
+    description String?
     location String
     logoUrl String?
     isApproved    Boolean   @default(false)

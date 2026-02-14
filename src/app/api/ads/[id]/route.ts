@@ -18,6 +18,17 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
             companyId: true,
             companyName: true,
             location: true,
+            description: true,
+            industry: true,  
+            website: true,    
+            user: {          
+              select: {
+                email: true,
+                firstName: true,
+                lastName: true,
+                phone: true,
+              }
+            }
           },
         },
         _count: {

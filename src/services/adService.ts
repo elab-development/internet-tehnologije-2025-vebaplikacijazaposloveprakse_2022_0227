@@ -13,4 +13,17 @@ export const adService = {
         if (!res.ok) throw new Error(result.message || "Greska pri dobavljanju oglasa");
         return result;
     },
+    getAdById: async (id: number): Promise<Ad> => {
+        const res = await fetch(`/api/ads/${id}`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message || "Greska pri dobavljanju oglasa");
+        return result;
+    }
 };

@@ -1,4 +1,3 @@
-import { JobType, JobStatus } from "@prisma/client";
 import { Company } from "./company";
 
 export interface Ad {
@@ -19,4 +18,13 @@ export interface Ad {
     _count?: {
         applications: number;
     };
+}
+export enum JobType {
+    INTERNSHIP = "INTERNSHIP",
+    JOB = "JOB",
+}
+export enum JobStatus {
+    ACTIVE = "ACTIVE",
+    CLOSED = "CLOSED",
+    EXPIRED = "EXPIRED",
 }
