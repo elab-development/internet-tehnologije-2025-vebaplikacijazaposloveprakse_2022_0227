@@ -24,18 +24,18 @@ export async function proxy(req: NextRequest) {
 
         }
     }
-    const isAuthPage = ['/login', '/register'].includes(pathname);
-    if (isAuthPage && payload) {
-        return NextResponse.redirect(new URL('/', req.url));
-    }
-    const isPublicApi =(pathname.startsWith('/api/ads') && req.method === 'GET') ||isAuthPage;
-    if (!isPublicApi && pathname.startsWith('/api/')) {
-        if (!payload) {
-            return NextResponse.json({
-                message: 'Morate biti ulogovani'
-            }, { status: 401 });
-        }
-    }
+    // const isAuthPage = ['/login', '/register'].includes(pathname);
+    // if (isAuthPage && payload) {
+    //     return NextResponse.redirect(new URL('/', req.url));
+    // }
+    // const isPublicApi =(pathname.startsWith('/api/ads') && req.method === 'GET') ||isAuthPage;
+    // if (!isPublicApi && pathname.startsWith('/api/')) {
+    //     if (!payload) {
+    //         return NextResponse.json({
+    //             message: 'Morate biti ulogovani'
+    //         }, { status: 401 });
+    //     }
+    // }
     const requestHeaders = new Headers(req.headers);
     if (payload) {
         requestHeaders.set('x-user-id', payload.userId.toString());

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Briefcase, MapPin, Clock, ArrowRight, Calendar } from 'lucide-react';
+import Link from 'next/link';
 import { Ad } from '@/src/types/ad';
 
 export const OpportunityCard = ({ item }: { item: Ad }) => (
@@ -43,17 +44,15 @@ export const OpportunityCard = ({ item }: { item: Ad }) => (
         </span>
       ))}
     </div>
-
-    {/* Footer kartice */}
     <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between">
       <div className="flex flex-col">
         <span className="text-[9px] text-slate-400 uppercase font-black tracking-widest mb-1">Objavljeno</span>
         <span className="text-xs text-[#1a3a94] font-black">{new Date(item.createdAt).toLocaleDateString('sr-RS')}</span>
       </div>
       
-      <div className="flex items-center gap-2 text-xs font-black text-[#1a3a94] uppercase tracking-widest group-hover:text-[#2bc3c3] transition-all cursor-pointer">
+      <Link href={`/ads/${item.id}`} className="flex items-center gap-2 text-xs font-black text-[#1a3a94] uppercase tracking-widest group-hover:text-[#2bc3c3] transition-all cursor-pointer">
         Detalji <ArrowRight size={14} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
-      </div>
+      </Link>
     </div>
   </div>
 );

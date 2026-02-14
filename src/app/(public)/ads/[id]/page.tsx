@@ -1,44 +1,50 @@
 "use client";
-import { useState } from 'react';
-import { JobType, JobStatus } from "@prisma/client";
-
-// Dummy podaci koji odgovaraju Prisma modelu
-const dummyAd = {
-  id: 1,
-  companyId: 1,
-  company: {
-    id: 1,
-    name: "Tech Solutions d.o.o.",
-    description: "Vodeca IT kompanija u regionu.",
-  },
-  title: "Senior Frontend Developer",
-  description: "Tražimo iskusnog Frontend developera za rad na challenging projektima.",
-  requirements: "Minimum 3 godine iskustva sa React-om, TypeScript, Next.js",
-  location: "Beograd, Srbija",
-  deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-  status: "ACTIVE" as JobStatus,
-  jobType: "FULL_TIME" as JobType,
-  createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-  updatedAt: new Date().toISOString(),
-  _count: {
-    applications: 24,
-  },
-};
+import { use, useEffect, useState } from 'react';
+import { Ad, JobType, JobStatus } from '@/src/types/ad';
+import { useParams } from 'next/navigation';
+import { adService } from '@/src/services/adService';
+import { LoadingState } from '@/src/components/ui/LoadingState';
+import { ErrorState } from '@/src/components/ui/ErrorState';
+import { applicationService } from '@/src/services/applicationService';
 
 export default function AdDetailsPage() {
+  const params = useParams();
+  const adId = params.id;
   const [applied, setApplied] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
-
-  const ad = dummyAd;
-
-  const handleApply = () => {
+  const [ad, setAd] = useState<Ad | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchAd = async () => {
+      try {
+        const res = await adService.getAdById(Number(adId));
+        setAd(res);
+        if (res.hasApplied) {
+          setApplied(true);
+        }
+        setLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Greska pri dobavljanju oglasa");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAd();
+  }, [adId]);
+  const handleApply = async () => {
     setIsApplying(true);
-    setTimeout(() => {
+    try {
+      await applicationService.applyToAd(Number(adId));
       setApplied(true);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Greska pri prijavljivanju na oglas");
+    } finally {
       setIsApplying(false);
-    }, 1500);
+    }
   };
-
+  const getStatusLabel = (status: string) => status === JobStatus.ACTIVE ? 'Aktivan' : 'Zatvoren';
+  const getJobTypeLabel = (type: string) => type === JobType.INTERNSHIP ? 'Praksa' : 'Posao';
   const formatDate = (date: Date | string) => {
     return new Date(date).toLocaleDateString('sr-RS', {
       year: 'numeric',
@@ -46,25 +52,13 @@ export default function AdDetailsPage() {
       day: 'numeric',
     });
   };
+  if (loading) return (
+    <LoadingState />
+  );
 
-  const getJobTypeLabel = (type: JobType) => {
-    const labels: Record<JobType, string> = {
-       INTERNSHIP: 'Praksa',
-      JOB: 'Puno radno vreme',
-      
-    };
-    return labels[type] || type;
-  };
-
-  const getStatusLabel = (status: JobStatus) => {
-    const labels: Record<JobStatus, string> = {
-      ACTIVE: 'Aktivan',
-      CLOSED: 'Zatvoren',
-      EXPIRED: 'Istekao',
-    };
-    return labels[status] || status;
-  };
-
+  if (error || !ad) return (
+    <ErrorState message={error || "Oglas nije pronađen"} />
+  );
   const isExpired = new Date(ad.deadline) < new Date();
 
   return (
@@ -78,17 +72,16 @@ export default function AdDetailsPage() {
                 {ad.title}
               </h1>
               {ad.company && (
-                <p className="text-xl text-gray-600">{ad.company.name}</p>
+                <p className="text-xl text-gray-600">{ad.company.companyName}</p>
               )}
             </div>
             <span
-              className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                ad.status === 'ACTIVE'
-                  ? 'bg-green-100 text-green-800'
-                  : ad.status === 'CLOSED'
+              className={`px-4 py-2 rounded-full text-sm font-semibold ${ad.status === JobStatus.ACTIVE
+                ? 'bg-green-100 text-green-800'
+                : ad.status === JobStatus.CLOSED
                   ? 'bg-red-100 text-red-800'
                   : 'bg-gray-100 text-gray-800'
-              }`}
+                }`}
             >
               {getStatusLabel(ad.status)}
             </span>
@@ -193,12 +186,36 @@ export default function AdDetailsPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               O kompaniji
             </h2>
-            <p className="text-lg font-semibold text-gray-800 mb-2">
-              {ad.company.name}
-            </p>
-            {ad.company.description && (
-              <p className="text-gray-700">{ad.company.description}</p>
-            )}
+
+            <div className="space-y-4">
+              <div>
+                <p className="text-xl font-bold text-gray-900">{ad.company.companyName}</p>
+                <p className="text-sm text-gray-500 font-medium">{ad.company.industry} • {ad.company.location}</p>
+              </div>
+
+              {ad.company.description && (
+                <p className="text-gray-700 leading-relaxed border-t border-gray-50 pt-4">
+                  {ad.company.description}
+                </p>
+              )}
+
+              <div className="flex flex-wrap gap-x-8 gap-y-2 pt-2">
+                {ad.company.website && (
+                  <div className="text-sm">
+                    <span className="font-semibold text-gray-900">Vebsajt: </span>
+                    <a href={ad.company.website} target="_blank" className="text-gray-600 hover:text-black transition-colors">
+                      {ad.company.website}
+                    </a>
+                  </div>
+                )}
+                {ad.company.user?.email && (
+                  <div className="text-sm">
+                    <span className="font-semibold text-gray-900">Kontakt: </span>
+                    <span className="text-gray-600">{ad.company.user.email}</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
@@ -233,7 +250,7 @@ export default function AdDetailsPage() {
                 Rok za prijavu je istekao
               </button>
             </div>
-          ) : ad.status !== 'ACTIVE' ? (
+          ) : ad.status !== JobStatus.ACTIVE ? (
             <div className="text-center">
               <p className="text-red-600 font-semibold mb-4">
                 Ovaj oglas trenutno nije aktivan
@@ -265,11 +282,10 @@ export default function AdDetailsPage() {
               <button
                 onClick={handleApply}
                 disabled={isApplying}
-                className={`w-full md:w-auto px-8 py-3 rounded-lg font-semibold transition-colors ${
-                  isApplying
-                    ? 'bg-[#1a3a94]/60 cursor-not-allowed'
-                    : 'bg-[#1a3a94] hover:bg-[#1a3a94]/90'
-                } text-white`}
+                className={`w-full md:w-auto px-8 py-3 rounded-lg font-semibold transition-colors ${isApplying
+                  ? 'bg-[#1a3a94]/60 cursor-not-allowed'
+                  : 'bg-[#1a3a94] hover:bg-[#1a3a94]/90'
+                  } text-white`}
               >
                 {isApplying ? 'Apliciranje...' : 'Apliciraj na oglas'}
               </button>

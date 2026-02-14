@@ -21,7 +21,7 @@ export default function RegisterPage() {
     const brandRing = isStudent ? "focus:ring-career-blue" : "focus:ring-hub-cyan";
     const brandShadow = isStudent ? "shadow-career-blue/30" : "shadow-hub-cyan/30";
     //----------------------------------------------------------------------------------//
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
