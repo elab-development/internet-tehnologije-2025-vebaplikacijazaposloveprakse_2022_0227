@@ -26,14 +26,14 @@ export default function Navbar() {
                     <div className="hidden lg:flex items-center gap-6 h-full">
                         <div className="flex items-center gap-2 group cursor-pointer h-full">
                             <BriefcaseBusiness size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
-                            <Link href="/oglasi" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
+                            <Link href="/ads" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
                                 Oglasi
                             </Link>
                         </div>
 
                         <div className="flex items-center gap-2 group cursor-pointer h-full">
                             <Building2 size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
-                            <Link href="/kompanije" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
+                            <Link href="/companies" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
                                 Kompanije
                             </Link>
                         </div>

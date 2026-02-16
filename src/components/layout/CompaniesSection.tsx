@@ -1,5 +1,6 @@
 import React from 'react';
 import { CompanyCard } from './CompanyCard';
+import Link from 'next/link';
 
 const companies = [
   { id: 1, name: "Partner 1", logo: "/Logo.jpg" },
@@ -28,9 +29,9 @@ export default function CompaniesSection() {
           ))}
         </div>
 
-        <button className="bg-[#2bc3c3] text-[#1a3a94] font-black px-12 py-4 rounded-full uppercase text-xs tracking-widest hover:bg-[#1a3a94] hover:text-white transition-all shadow-lg">
+        <Link href="/register?role=company" className="cursor-pointer bg-[#2bc3c3] text-[#1a3a94] font-black px-12 py-4 rounded-full uppercase text-xs tracking-widest hover:bg-[#1a3a94] hover:text-white transition-all shadow-lg">
           Postani partner
-        </button>
+        </Link>
 
       </div>
     </section>
