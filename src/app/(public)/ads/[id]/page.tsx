@@ -6,12 +6,14 @@ import { adService } from '@/src/services/adService';
 import { LoadingState } from '@/src/components/ui/LoadingState';
 import { ErrorState } from '@/src/components/ui/ErrorState';
 import { applicationService } from '@/src/services/applicationService';
+import Link from 'next/link';
 
 export default function AdDetailsPage() {
   const params = useParams();
   const adId = params.id;
   const [applied, setApplied] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
+  const [applyError, setApplyError] = useState<string | null>(null);
   const [ad, setAd] = useState<Ad | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,11 +36,19 @@ export default function AdDetailsPage() {
   }, [adId]);
   const handleApply = async () => {
     setIsApplying(true);
+    setApplyError(null);
     try {
       await applicationService.applyToAd(Number(adId));
       setApplied(true);
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Greska pri prijavljivanju na oglas");
+      const message = err instanceof Error ? err.message : "Greska pri prijavi";
+      if (message.includes("401") || message.toLowerCase().includes("ulogovani")) {
+        setApplyError("Morate biti ulogovani kao student da biste aplicirali.");
+      } else if (message.includes("403")) {
+        setApplyError("Samo studenti imaju pravo prijave na oglase.");
+      } else {
+        setApplyError(message);
+      }
     } finally {
       setIsApplying(false);
     }
@@ -245,7 +255,7 @@ export default function AdDetailsPage() {
               </p>
               <button
                 disabled
-                className="w-full md:w-auto px-8 py-3 bg-gray-300 text-gray-500 rounded-lg font-semibold cursor-not-allowed"
+                className="cursor-pointer w-full md:w-auto px-8 py-3 bg-gray-300 text-gray-500 rounded-lg font-semibold cursor-not-allowed"
               >
                 Rok za prijavu je istekao
               </button>
@@ -257,7 +267,7 @@ export default function AdDetailsPage() {
               </p>
               <button
                 disabled
-                className="w-full md:w-auto px-8 py-3 bg-gray-300 text-gray-500 rounded-lg font-semibold cursor-not-allowed"
+                className="cursor-pointer w-full md:w-auto px-8 py-3 bg-gray-300 text-gray-500 rounded-lg font-semibold cursor-not-allowed"
               >
                 Prijave nisu moguće
               </button>
@@ -269,28 +279,45 @@ export default function AdDetailsPage() {
               </p>
               <button
                 disabled
-                className="w-full md:w-auto px-8 py-3 bg-green-500 text-white rounded-lg font-semibold cursor-not-allowed"
+                className="cursor-pointer w-full md:w-auto px-8 py-3 bg-green-500 text-white rounded-lg font-semibold cursor-not-allowed"
               >
                 ✓ Aplicirali ste
               </button>
             </div>
-          ) : (
+          ) : applyError? (
             <div className="text-center">
-              <p className="text-gray-700 mb-4">
-                Zainteresovani ste za ovu poziciju? Aplicirajte odmah!
+              <p className="text-red-600 mb-4 font-medium">
+                Morate biti prijavljeni kao student.
               </p>
               <button
-                onClick={handleApply}
-                disabled={isApplying}
-                className={`w-full md:w-auto px-8 py-3 rounded-lg font-semibold transition-colors ${isApplying
-                  ? 'bg-[#1a3a94]/60 cursor-not-allowed'
-                  : 'bg-[#1a3a94] hover:bg-[#1a3a94]/90'
-                  } text-white`}
+                disabled
+                className="cursor-pointer w-full md:w-auto px-8 py-3 bg-red-500 text-white rounded-lg font-semibold cursor-not-allowed opacity-80"
               >
-                {isApplying ? 'Apliciranje...' : 'Apliciraj na oglas'}
+                Niste ulogovani
               </button>
-            </div>
-          )}
+              <div className="mt-2 text-sm text-gray-600">
+                <Link href="/login" className="text-[#1a3a94] font-bold underline hover:text-[#1a3a94]/80">
+                  Prijavite se ovde
+                </Link>
+              </div>
+            </div>) :
+            (
+              <div className="text-center">
+                <p className="text-gray-700 mb-4">
+                  Zainteresovani ste za ovu poziciju? Aplicirajte odmah!
+                </p>
+                <button
+                  onClick={handleApply}
+                  disabled={isApplying}
+                  className={`cursor-pointer w-full md:w-auto px-8 py-3 rounded-lg font-semibold transition-colors ${isApplying
+                    ? 'bg-[#1a3a94]/60 cursor-not-allowed'
+                    : 'bg-[#1a3a94] hover:bg-[#1a3a94]/90'
+                    } text-white`}
+                >
+                  {isApplying ? 'Apliciranje...' : 'Apliciraj na oglas'}
+                </button>
+              </div>
+            )}
         </div>
       </div>
     </div>
