@@ -1,14 +1,56 @@
-import React from 'react';
-import { CompanyCard } from './CompanyCard';
 import Link from 'next/link';
-
-const companies = [
-  { id: 1, name: "Partner 1", logo: "/Logo.jpg" },
-  { id: 2, name: "Partner 2", logo: "/Logo.jpg" },
-  { id: 3, name: "Partner 3", logo: "/Logo.jpg" },
-  { id: 4, name: "Partner 4", logo: "/Logo.jpg" },
+import { CompanyCard } from "@/src/components/companies/CompanyCard";
+import { Company } from '@/src/types/company';
+const DUMMY_COMPANIES: Company[] = [
+  {
+    companyId: 1,
+    companyName: "Microsoft",
+    industry: "Software & Cloud",
+    location: "Beograd",
+    description: "Vodeći svetski tehnološki gigant fokusiran na razvoj softvera, veštačke inteligencije i cloud infrastrukture.",
+    website: "microsoft.com",
+    isApproved: true,
+    taxNumber: "123456789",
+    regNumber: "987654321",
+    _count: { ads: 14 }
+  } as Company,
+  {
+    companyId: 2,
+    companyName: "Nordeus",
+    industry: "Gaming Industry",
+    location: "Beograd",
+    description: "Najuspešnija regionalna gejming kompanija, tvorci globalnog hita Top Eleven i lideri u inovacijama.",
+    website: "nordeus.com",
+    isApproved: true,
+    taxNumber: "223456789",
+    regNumber: "887654321",
+    _count: { ads: 6 }
+  } as Company,
+  {
+    companyId: 3,
+    companyName: "Schneider Electric",
+    industry: "Energy & AI",
+    location: "Novi Sad",
+    description: "Globalni lider u digitalnoj transformaciji upravljanja energijom i automatizaciji za industriju i domove.",
+    website: "se.com",
+    isApproved: true,
+    taxNumber: "323456789",
+    regNumber: "787654321",
+    _count: { ads: 21 }
+  } as Company,
+  {
+    companyId: 4,
+    companyName: "Levi9",
+    industry: "IT Services",
+    location: "Beograd / Novi Sad",
+    description: "Strateški tehnološki partner koji pruža usluge razvoja softvera vrhunskim svetskim klijentima.",
+    website: "levi9.com",
+    isApproved: true,
+    taxNumber: "423456789",
+    regNumber: "687654321",
+    _count: { ads: 9 }
+  } as Company
 ];
-
 export default function CompaniesSection() {
   return (
     <section className="py-20 bg-gray-50">
@@ -20,11 +62,8 @@ export default function CompaniesSection() {
 
         {/* Ovde se dešava magija: map prolazi kroz listu i za svakog crta CompanyCard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-          {companies.map((company) => (
-            <CompanyCard 
-              key={company.id} 
-              name={company.name} 
-              logo={company.logo} 
+          {DUMMY_COMPANIES.map((company) => (
+            <CompanyCard key={company.companyId} item={company}
             />
           ))}
         </div>

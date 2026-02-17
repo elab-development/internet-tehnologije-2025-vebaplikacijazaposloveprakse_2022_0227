@@ -33,7 +33,7 @@ export default function Homepage() {
       <HeaderSection />
 
       <div className="max-w-7xl mx-auto py-24 px-6 md:px-8">
-        <SectionHeader title="Aktuelni oglasi za poslove i prakse" subtitle="Pronadjite svoju sledecu priliku medju najnovijim oglasima." buttonText="Pogledajte sve" location="/ads" />
+        <SectionHeader title="Aktuelni oglasi za poslove i prakse" subtitle="Pronadjite svoju sledecu priliku medju najnovijim oglasima." buttonText="Pogledajte sve" />
         <CompaniesSection />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-t border-l border-gray-100">
           {loading && (

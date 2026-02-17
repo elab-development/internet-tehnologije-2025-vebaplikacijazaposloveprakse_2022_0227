@@ -1,7 +1,7 @@
 
-export default function HeaderSection() {
+export default function HeaderSection( { bgurl }: { bgurl?: string } ) {
     return (
-        <div className="w-full pt-40 pb-20 md:pt-48 md:pb-32 px-6 border-b border-gray-100 bg-[#1a3a94]/5">
+        <div className="w-full pt-40 pb-20 md:pt-48 md:pb-32 px-6 border-b border-gray-100 bg-[#1a3a94]/5" style={{ backgroundImage: `url(${bgurl})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
             <div className="max-w-5xl mx-auto text-left">
                 <div className="flex items-center gap-2 mb-6">
                     <div className="h-[2px] w-10 bg-[#2bc3c3]"></div>
