@@ -1,4 +1,5 @@
 import { db } from "@/src/lib/db";
+import { ApplicationStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
@@ -7,9 +8,18 @@ export async function GET(request: Request, { params }: { params: { id: string }
         const adId = parseInt(id);
         const companyId = request.headers.get("x-user-id");
         const companyIdNum = parseInt(companyId!);
+        const { searchParams } = new URL(request.url);
+        const statusFilter = searchParams.get('status');
         if (isNaN(adId)) return NextResponse.json({ message: "Nevalidan ID oglasa" }, { status: 400 });
+        const whereClause: any = {
+            adId,
+            ad: { companyId: companyIdNum }
+        };
+        if (statusFilter && statusFilter !== 'ALL') {
+            whereClause.status = statusFilter as ApplicationStatus;
+        }
         const applications = await db.jobApplication.findMany({
-            where: { adId, ad: { companyId: companyIdNum } },
+            where: whereClause,
             include: {
                 student: {
                     select: {
@@ -32,4 +42,3 @@ export async function GET(request: Request, { params }: { params: { id: string }
         return NextResponse.json({ message: "Greska pri dobavljanju prijava za oglas" }, { status: 500 });
     }
 }
-    

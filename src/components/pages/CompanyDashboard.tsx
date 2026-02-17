@@ -1,18 +1,23 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Ad } from "@/src/types/ad";
-import { Plus, AlertCircle, MousePointer2, Edit } from "lucide-react";
+import { Plus, AlertCircle, MousePointer2, Filter, Inbox } from "lucide-react";
 import CreateAdModal from '../companies/CreateAdModal';
 import { adService } from '@/src/services/adService';
 import { LoadingState } from '../ui/LoadingState';
 import { ErrorState } from '../ui/ErrorState';
-import { JobApplication } from '@/src/types/jobApplication';
+import { ApplicationStatus, JobApplication } from '@/src/types/jobApplication';
 import { AdCard } from '../companies/AdCard';
 import { ApplicationCardDesh } from '../companies/ApplicationCardDesh';
 import { ConfirmPopup } from '../ui/ConfirmPopup';
 import EditAdModal from '../companies/EditAdModal';
+import { applicationService } from '@/src/services/applicationService';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function CompanyDashboard() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    
     const [activeTab, setActiveTab] = useState<'oglasi' | 'prijave'>('oglasi');
     const [ads, setAds] = useState<Ad[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -22,6 +27,7 @@ export default function CompanyDashboard() {
     const [applications, setApplications] = useState<JobApplication[]>([]);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedAdToEdit, setSelectedAdToEdit] = useState<Ad | null>(null);
+    const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'ALL'>('ALL');
     const [confirmConfig, setConfirmConfig] = useState<{
         isOpen: boolean;
         adId: number | null;
@@ -30,6 +36,22 @@ export default function CompanyDashboard() {
     useEffect(() => {
         fetchAds();
     }, []);
+
+    useEffect(() => {
+        const adIdParam = searchParams.get('adId');
+        const statusParam = searchParams.get('status');
+        
+        if (adIdParam) {
+            const adId = parseInt(adIdParam);
+            if (!isNaN(adId) && adId !== selectedAdId) {
+                handleSelectAd(adId);
+            }
+        }
+        
+        if (statusParam && (statusParam === 'ALL' || statusParam === 'PENDING' || statusParam === 'ACCEPTED' || statusParam === 'REJECTED')) {
+            setStatusFilter(statusParam as ApplicationStatus | 'ALL');
+        }
+    }, [searchParams]);
 
     const fetchAds = async () => {
         setLoading(true);
@@ -42,10 +64,12 @@ export default function CompanyDashboard() {
             setLoading(false);
         }
     };
+
     const handleEditClick = (ad: Ad) => {
         setSelectedAdToEdit(ad);
         setIsEditModalOpen(true);
     };
+
     const handleDeleteClick = (id: number) => {
         setConfirmConfig({ isOpen: true, adId: id });
     };
@@ -55,7 +79,10 @@ export default function CompanyDashboard() {
         try {
             await adService.deleteAd(confirmConfig.adId);
             setAds(prev => prev.filter(ad => ad.id !== confirmConfig.adId));
-            if (selectedAdId === confirmConfig.adId) setSelectedAdId(null);
+            if (selectedAdId === confirmConfig.adId) {
+                setSelectedAdId(null);
+                router.push('/dashboard/company');
+            }
             setConfirmConfig({ isOpen: false, adId: null });
         } catch (err) {
             alert("Greška pri brisanju oglasa");
@@ -65,9 +92,14 @@ export default function CompanyDashboard() {
     const handleSelectAd = async (adId: number) => {
         setSelectedAdId(adId);
         setActiveTab('prijave');
+        const currentStatus = searchParams.get('status') || 'ALL';
+        setStatusFilter(currentStatus as ApplicationStatus | 'ALL');
+        
+        router.push(`?adId=${adId}&status=${currentStatus}`);
+        
         setLoading(true);
         try {
-            const res = await adService.getApplicationsForAd(adId);
+            const res = await adService.getApplicationsForAd(adId, currentStatus as ApplicationStatus | 'ALL');
             setApplications(res as JobApplication[]);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Greska pri dobavljanju prijava");
@@ -75,6 +107,54 @@ export default function CompanyDashboard() {
             setLoading(false);
         }
     };
+
+    const handleFilterChange = async (newStatus: ApplicationStatus | 'ALL') => {
+        setStatusFilter(newStatus);
+        if (!selectedAdId) return;
+        
+        router.push(`?adId=${selectedAdId}&status=${newStatus}`);
+        
+        setLoading(true);
+        try {
+            const res = await adService.getApplicationsForAd(selectedAdId, newStatus);
+            setApplications(res as JobApplication[]);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Greska pri dobavljanju prijava");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleStatusChange = async (applicationId: number, newStatus: ApplicationStatus) => {
+        try {
+            await applicationService.updateApplicationStatus(applicationId, newStatus);
+            setApplications(prev =>
+                prev.map(app => app.id === applicationId ? { ...app, status: newStatus } : app)
+            );
+        } catch (err) {
+            alert(err instanceof Error ? err.message : "Greška");
+        }
+    };
+
+    const handleCloseApplications = () => {
+        router.push('/');
+        setSelectedAdId(null);
+        setActiveTab('oglasi');
+    };
+
+    const getEmptyStateMessage = () => {
+        switch (statusFilter) {
+            case 'ACCEPTED':
+                return 'Nema prihvacenih prijava';
+            case 'REJECTED':
+                return 'Nema odbijenih prijava';
+            case 'PENDING':
+                return 'Nema prijava na cekanju';
+            default:
+                return 'Nema prijava za ovaj oglas';
+        }
+    };
+
     return (
         <div className="p-8 bg-white min-h-screen font-sans selection:bg-[#2bc3c3] selection:text-[#1a3a94]">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
@@ -130,19 +210,69 @@ export default function CompanyDashboard() {
                     ) : (
                         selectedAdId ? (
                             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
-                                <div className="flex justify-between items-end border-b-8 border-[#1a3a94] pb-4 mb-8">
-                                    <h2 className="text-4xl font-[1000] uppercase tracking-tighter text-[#1a3a94]">KANDIDATI ZA <span className="text-[#2bc3c3]">OGLAS #{selectedAdId}</span></h2>
-                                    <button onClick={() => { setSelectedAdId(null); setActiveTab('oglasi'); }} className="cursor-pointer bg-[#1a3a94] text-white px-6 py-2 text-[10px] font-black uppercase hover:bg-red-500 transition-colors">Zatvori</button>
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b-8 border-[#1a3a94] pb-4 mb-8">
+                                    <div>
+                                        <h2 className="text-4xl font-[1000] uppercase tracking-tighter text-[#1a3a94]">
+                                            KANDIDATI ZA <span className="text-[#2bc3c3]">OGLAS #{selectedAdId}</span>
+                                        </h2>
+                                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mt-2">
+                                            {applications.length} {applications.length === 1 ? 'Prijava' : 'Prijave'}
+                                        </p>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-2">
+                                            <Filter size={16} className="text-[#2bc3c3]" />
+                                            <select
+                                                value={statusFilter}
+                                                onChange={(e) => handleFilterChange(e.target.value as ApplicationStatus | 'ALL')}
+                                                className="cursor-pointer bg-white border-4 border-[#1a3a94] px-4 py-2 text-[#1a3a94] font-black uppercase text-[10px] tracking-widest hover:bg-[#2bc3c3] transition-all"
+                                            >
+                                                <option value="ALL">Sve prijave</option>
+                                                <option value="PENDING">Na cekanju</option>
+                                                <option value="ACCEPTED">Prihvaceni</option>
+                                                <option value="REJECTED">Odbijeni</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <button 
+                                            onClick={handleCloseApplications}
+                                            className="cursor-pointer bg-[#1a3a94] text-white px-6 py-2 text-[10px] font-black uppercase hover:bg-red-500 transition-colors"
+                                        >
+                                            Zatvori
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                    {applications.length > 0 ? applications.map(app => <ApplicationCardDesh key={app.id} app={app} />) : <p className="text-gray-400 font-black uppercase italic">Nema prijava za ovaj oglas.</p>}
-                                </div>
+
+                                {applications.length > 0 ? (
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        {applications.map(app => (
+                                            <ApplicationCardDesh
+                                                key={app.id}
+                                                app={app}
+                                                onStatusUpdate={handleStatusChange} 
+                                            />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center py-20 border-4 border-dashed border-gray-200">
+                                        <div className="w-20 h-20 bg-gray-100 flex items-center justify-center mb-6">
+                                            <Inbox size={40} className="text-gray-300" />
+                                        </div>
+                                        <h3 className="text-2xl font-black text-gray-400 uppercase tracking-tight mb-2">
+                                            {getEmptyStateMessage()}
+                                        </h3>
+                                        <p className="text-xs font-bold text-gray-300 uppercase tracking-widest">
+                                            {statusFilter !== 'ALL' ? 'Probajte drugi filter' : 'Jos nema prijava'}
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         ) : (
                             <div className="relative border-4 border-[#1a3a94] p-20 text-center bg-white shadow-[12px_12px_0px_0px_rgba(26,58,148,0.05)]">
                                 <MousePointer2 size={64} className="text-[#1a3a94] mx-auto mb-4 rotate-12" />
                                 <h2 className="text-4xl font-[1000] uppercase text-[#1a3a94]">Izaberite <span className="text-[#2bc3c3]">Oglas</span></h2>
-                                <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Prvo označite oglas u listi da biste videli kandidate.</p>
+                                <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Prvo oznacite oglas u listi da biste videli kandidate.</p>
                             </div>
                         )
                     )}

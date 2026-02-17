@@ -1,4 +1,3 @@
-import { ApplicationStatus } from "@prisma/client";
 
 export interface JobApplication {
   id: number;
@@ -16,4 +15,9 @@ export interface JobApplication {
       phone: string | null;
     };
   };
+}
+export enum ApplicationStatus {
+  PENDING = "PENDING",
+  ACCEPTED = "ACCEPTED",
+  REJECTED = "REJECTED",
 }

@@ -1,6 +1,6 @@
 import { get } from "http";
 import { Ad } from "../types/ad";
-import { JobApplication } from "@prisma/client";
+import { JobApplication } from "../types/jobApplication";
 export const adService = {
     getAds: async (): Promise<Ad[]> => {
         const res = await fetch("/api/ads",
@@ -67,8 +67,9 @@ export const adService = {
         const result = await res.json();
         if (!res.ok) throw new Error(result.message || "Greska pri brisanju oglasa");
     },
-    getApplicationsForAd: async (adId: number): Promise<JobApplication[]> => {
-        const res = await fetch(`/api/ads/${adId}/applications`,
+    getApplicationsForAd: async (adId: number, status?: string): Promise<JobApplication[]> => {
+        const url = status ? `/api/ads/${adId}/applications?status=${status}` : `/api/ads/${adId}/applications`;
+        const res = await fetch(url,
             {
                 method: "GET",
                 headers: {

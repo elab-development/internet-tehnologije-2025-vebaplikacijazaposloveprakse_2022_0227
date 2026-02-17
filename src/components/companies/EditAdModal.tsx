@@ -4,19 +4,19 @@ import { useState, useEffect } from 'react';
 import { X, Save, Calendar, MapPin, Type, Award, Plus, Trash2 } from 'lucide-react';
 import { JobType, JobStatus, Ad } from "@/src/types/ad";
 import { adService } from '@/src/services/adService';
-import StatusPopup from '../ui/StatusPopup';
+import { InfoPopup } from '../ui/InfoPopup';
 
 interface EditAdModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess?: () => void;
-    adToEdit: Ad; 
+    adToEdit: Ad;
 }
 
 export default function EditAdModal({ isOpen, onClose, onSuccess, adToEdit }: EditAdModalProps) {
     const [requirementsList, setRequirementsList] = useState<string[]>(() => {
-        return typeof adToEdit.requirements === 'string' 
-            ? JSON.parse(adToEdit.requirements) 
+        return typeof adToEdit.requirements === 'string'
+            ? JSON.parse(adToEdit.requirements)
             : adToEdit.requirements || [];
     });
     const [currentRequirement, setCurrentRequirement] = useState('');
@@ -50,13 +50,13 @@ export default function EditAdModal({ isOpen, onClose, onSuccess, adToEdit }: Ed
                 location: data.location as string,
                 deadline: data.deadline as string,
                 jobType: jobType,
-                status: adToEdit.status, 
+                status: adToEdit.status,
                 requirements: JSON.stringify(requirementsList)
             };
 
             await adService.updateAd(adToEdit.id, finalPayload);
             setPopup({ type: 'success', msg: 'Oglas je uspesno izmenjen!' });
-            
+
         } catch (err) {
             setPopup({ type: 'error', msg: err instanceof Error ? err.message : 'Doslo je do greske!' });
         } finally {
@@ -68,8 +68,8 @@ export default function EditAdModal({ isOpen, onClose, onSuccess, adToEdit }: Ed
         const isSuccess = popup?.type === 'success';
         setPopup(null);
         if (isSuccess) {
-            if (onSuccess) onSuccess(); 
-            onClose(); 
+            if (onSuccess) onSuccess();
+            onClose();
         }
     };
 
@@ -180,9 +180,10 @@ export default function EditAdModal({ isOpen, onClose, onSuccess, adToEdit }: Ed
             </div>
 
             {popup && (
-                <StatusPopup
+                <InfoPopup
+                    isOpen={!!popup}
                     type={popup.type}
-                    title={popup.type === 'success' ? 'USPESNO!' : 'GRESKA!'}
+                    title={popup.type === 'success' ? 'USPEŠNO!' : 'GREŠKA!'}
                     message={popup.msg}
                     onClose={handleClosePopup}
                 />

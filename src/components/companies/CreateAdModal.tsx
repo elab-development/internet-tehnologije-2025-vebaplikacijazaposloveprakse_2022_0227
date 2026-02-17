@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { X, Save, Calendar, MapPin, Type, FileText, Award, Plus, Trash2 } from 'lucide-react';
 import { JobType, JobStatus } from "@/src/types/ad";
 import { adService } from '@/src/services/adService';
-import StatusPopup from '../ui/StatusPopup';
+import { InfoPopup } from '../ui/InfoPopup';
 
 interface CreateAdModalProps {
     isOpen: boolean;
@@ -59,8 +59,8 @@ export default function CreateAdModal({ isOpen, onClose, onSuccess }: CreateAdMo
         const isSuccess = popup?.type === 'success';
         setPopup(null);
         if (isSuccess) {
-            if (onSuccess) onSuccess(); 
-            onClose(); 
+            if (onSuccess) onSuccess();
+            onClose();
         }
     };
     return (
@@ -215,14 +215,12 @@ export default function CreateAdModal({ isOpen, onClose, onSuccess }: CreateAdMo
                 </form>
             </div>
             {popup && (
-                <StatusPopup
+                <InfoPopup
+                    isOpen={!!popup}
                     type={popup.type}
-                    title={popup.type === 'success' ? 'Uspesno!' : 'Greska!'}
+                    title={popup.type === 'success' ? 'USPESNO!' : 'GRESKA!'}
                     message={popup.msg}
-                    onClose={() => {
-                        setPopup(null);
-                        if (popup.type === 'success') onClose();
-                    }}
+                    onClose={handleClosePopup}
                 />
             )}
         </div>
