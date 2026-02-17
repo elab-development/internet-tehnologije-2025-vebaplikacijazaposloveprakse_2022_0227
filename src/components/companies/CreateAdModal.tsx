@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { X, Save, Calendar, MapPin, Type, FileText, Award, Plus, Trash2 } from 'lucide-react';
 import { JobType, JobStatus } from "@/src/types/ad";
+import { adService } from '@/src/services/adService';
+import StatusPopup from '../ui/StatusPopup';
 
 interface CreateAdModalProps {
     isOpen: boolean;
@@ -13,7 +15,8 @@ export default function CreateAdModal({ isOpen, onClose }: CreateAdModalProps) {
     const [requirementsList, setRequirementsList] = useState<string[]>([]);
     const [currentRequirement, setCurrentRequirement] = useState('');
     const [jobType, setJobType] = useState<JobType>(JobType.JOB);
-
+    const [loading, setLoading] = useState<boolean>(false);
+    const [popup, setPopup] = useState<{ type: 'success' | 'error', msg: string } | null>(null);
     if (!isOpen) return null;
 
     const addRequirement = () => {
@@ -27,21 +30,29 @@ export default function CreateAdModal({ isOpen, onClose }: CreateAdModalProps) {
         setRequirementsList(requirementsList.filter((_, i) => i !== index));
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const data = Object.fromEntries(formData.entries());
+        try {
+            setLoading(true);
+            const formData = new FormData(e.currentTarget);
+            const data = Object.fromEntries(formData.entries());
 
-        const finalPayload = {
-            ...data,
-            jobType: jobType, 
-            status: JobStatus.ACTIVE,
-            requirements: JSON.stringify(requirementsList) 
-        };
-
-        console.log("Payload za slanje:", finalPayload);
-        setRequirementsList([]);
-        onClose();
+            const finalPayload = {
+                title: data.title as string,
+                description: data.description as string,
+                location: data.location as string,
+                deadline: data.deadline as string,
+                jobType: jobType,
+                status: JobStatus.ACTIVE,
+                requirements: JSON.stringify(requirementsList)
+            };
+            await adService.createAd(finalPayload);
+            setPopup({ type: 'success', msg: 'Vas oglas je uspesno postavljen na platformu!' });
+        } catch (err) {
+            setPopup({ type: 'error', msg: err instanceof Error ? err.message : 'Doslo je do neke greske!' });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -62,8 +73,8 @@ export default function CreateAdModal({ isOpen, onClose }: CreateAdModalProps) {
                             <label className="block text-[12px] font-[1000] uppercase tracking-[0.2em] text-[#1a3a94] mb-2">Naslov Pozicije</label>
                             <div className="relative">
                                 <Type className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1a3a94]" size={20} />
-                                <input 
-                                    name="title" 
+                                <input
+                                    name="title"
                                     required
                                     className="w-full border-2 border-[#1a3a94] p-4 pl-10 text-[15px] font-black text-[#1a3a94] placeholder:text-zinc-400 focus:outline-none focus:bg-[#2bc3c3]/10 transition-colors"
                                     placeholder="Npr. Senior Software Engineer"
@@ -75,8 +86,8 @@ export default function CreateAdModal({ isOpen, onClose }: CreateAdModalProps) {
                             <label className="block text-[12px] font-[1000] uppercase tracking-[0.2em] text-[#1a3a94] mb-2">Lokacija</label>
                             <div className="relative">
                                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1a3a94]" size={20} />
-                                <input 
-                                    name="location" 
+                                <input
+                                    name="location"
                                     required
                                     className="w-full border-2 border-[#1a3a94] p-4 pl-10 text-[15px] font-black text-[#1a3a94] placeholder:text-zinc-400 focus:outline-none focus:bg-[#2bc3c3]/10"
                                     placeholder="Beograd (Remote)"
@@ -88,7 +99,7 @@ export default function CreateAdModal({ isOpen, onClose }: CreateAdModalProps) {
                             <label className="block text-[12px] font-[1000] uppercase tracking-[0.2em] text-[#1a3a94] mb-2">Rok za prijavu</label>
                             <div className="relative">
                                 <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1a3a94]" size={20} />
-                                <input 
+                                <input
                                     name="deadline"
                                     required
                                     type="date"
@@ -119,7 +130,7 @@ export default function CreateAdModal({ isOpen, onClose }: CreateAdModalProps) {
 
                         <div className="md:col-span-2">
                             <label className="block text-[12px] font-[1000] uppercase tracking-[0.2em] text-[#1a3a94] mb-2">Opis Pozicije</label>
-                            <textarea 
+                            <textarea
                                 name="description"
                                 required
                                 rows={4}
@@ -133,7 +144,7 @@ export default function CreateAdModal({ isOpen, onClose }: CreateAdModalProps) {
                             <div className="flex gap-2 mb-4">
                                 <div className="relative flex-1">
                                     <Award className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1a3a94]" size={20} />
-                                    <input 
+                                    <input
                                         type="text"
                                         value={currentRequirement}
                                         onChange={(e) => setCurrentRequirement(e.target.value)}
@@ -142,7 +153,7 @@ export default function CreateAdModal({ isOpen, onClose }: CreateAdModalProps) {
                                         onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addRequirement(); } }}
                                     />
                                 </div>
-                                <button 
+                                <button
                                     type="button"
                                     onClick={addRequirement}
                                     className="bg-[#2bc3c3] border-2 border-[#1a3a94] px-6 text-[#1a3a94] shadow-[4px_4px_0px_0px_rgba(26,58,148,1)] cursor-pointer active:translate-y-1"
@@ -174,14 +185,38 @@ export default function CreateAdModal({ isOpen, onClose }: CreateAdModalProps) {
                         </button>
                         <button
                             type="submit"
-                            className="flex-[2] bg-[#1a3a94] text-white px-8 py-5 font-[1000] uppercase tracking-widest text-sm flex items-center justify-center gap-3 hover:bg-[#2bc3c3] hover:text-[#1a3a94] transition-all cursor-pointer shadow-[10px_10px_0px_0px_rgba(43,195,195,1)] active:translate-y-1"
+                            disabled={loading}
+                            className={`flex-[2] px-8 py-5 font-[1000] uppercase tracking-widest text-sm flex items-center justify-center gap-3 transition-all ${loading
+                                    ? "bg-zinc-400 cursor-not-allowed shadow-none translate-y-1 text-zinc-200"
+                                    : "bg-[#1a3a94] text-white hover:bg-[#2bc3c3] hover:text-[#1a3a94] cursor-pointer shadow-[10px_10px_0px_0px_rgba(43,195,195,1)] active:translate-y-1"
+                                }`}
                         >
-                            <Save size={22} strokeWidth={3} />
-                            Objavi Oglas
+                            {loading ? (
+                                <>
+                                    <div className="w-5 h-5 border-4 border-zinc-200 border-t-transparent rounded-full animate-spin" />
+                                    <span>Upisivanje...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Save size={22} strokeWidth={3} />
+                                    <span>Objavi Oglas</span>
+                                </>
+                            )}
                         </button>
                     </div>
                 </form>
             </div>
+            {popup && (
+                <StatusPopup
+                    type={popup.type}
+                    title={popup.type === 'success' ? 'Uspesno!' : 'Greska!'}
+                    message={popup.msg}
+                    onClose={() => {
+                        setPopup(null);
+                        if (popup.type === 'success') onClose();
+                    }}
+                />
+            )}
         </div>
     );
 }

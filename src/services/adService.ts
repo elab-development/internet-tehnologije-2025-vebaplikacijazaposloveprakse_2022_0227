@@ -25,5 +25,19 @@ export const adService = {
         const result = await res.json();
         if (!res.ok) throw new Error(result.message || "Greska pri dobavljanju oglasa");
         return result;
+    },
+    createAd: async (data: Omit<Ad, 'id' | 'companyId' | 'createdAt' | 'updatedAt'>): Promise<Ad> => {
+        const res = await fetch("/api/ads",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            }
+        );
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message || "Greska pri kreiranju oglasa");
+        return result;
     }
 };
