@@ -7,4 +7,13 @@ export interface JobApplication {
   status: ApplicationStatus;
   appliedAt: Date;
   updatedAt: Date;
+  student: {
+    studentId: number;
+    user: {
+      email: string;
+      firstName: string;
+      lastName: string;
+      phone: string | null;
+    };
+  };
 }

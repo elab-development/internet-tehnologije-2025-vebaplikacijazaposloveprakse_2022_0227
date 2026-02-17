@@ -1,13 +1,80 @@
 'use client';
-import { useState } from 'react';
-import { Ad, JobStatus, JobType } from "@/src/types/ad";
-import { Plus, Users, Briefcase, Search, XCircle, AlertCircle, MousePointer2 } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { Ad } from "@/src/types/ad";
+import { Plus, AlertCircle, MousePointer2, Edit } from "lucide-react";
 import CreateAdModal from '../companies/CreateAdModal';
+import { adService } from '@/src/services/adService';
+import { LoadingState } from '../ui/LoadingState';
+import { ErrorState } from '../ui/ErrorState';
+import { JobApplication } from '@/src/types/jobApplication';
+import { AdCard } from '../companies/AdCard';
+import { ApplicationCardDesh } from '../companies/ApplicationCardDesh';
+import { ConfirmPopup } from '../ui/ConfirmPopup';
+import EditAdModal from '../companies/EditAdModal';
 
 export default function CompanyDashboard() {
     const [activeTab, setActiveTab] = useState<'oglasi' | 'prijave'>('oglasi');
     const [ads, setAds] = useState<Ad[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedAdId, setSelectedAdId] = useState<number | null>(null);
+    const [applications, setApplications] = useState<JobApplication[]>([]);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [selectedAdToEdit, setSelectedAdToEdit] = useState<Ad | null>(null);
+    const [confirmConfig, setConfirmConfig] = useState<{
+        isOpen: boolean;
+        adId: number | null;
+    }>({ isOpen: false, adId: null });
+
+    useEffect(() => {
+        fetchAds();
+    }, []);
+
+    const fetchAds = async () => {
+        setLoading(true);
+        try {
+            const res = await adService.getMyAds();
+            setAds(res);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Greska pri dobavljanju oglasa");
+        } finally {
+            setLoading(false);
+        }
+    };
+    const handleEditClick = (ad: Ad) => {
+        setSelectedAdToEdit(ad);
+        setIsEditModalOpen(true);
+    };
+    const handleDeleteClick = (id: number) => {
+        setConfirmConfig({ isOpen: true, adId: id });
+    };
+
+    const handleActualDelete = async () => {
+        if (!confirmConfig.adId) return;
+        try {
+            await adService.deleteAd(confirmConfig.adId);
+            setAds(prev => prev.filter(ad => ad.id !== confirmConfig.adId));
+            if (selectedAdId === confirmConfig.adId) setSelectedAdId(null);
+            setConfirmConfig({ isOpen: false, adId: null });
+        } catch (err) {
+            alert("Greška pri brisanju oglasa");
+        }
+    };
+
+    const handleSelectAd = async (adId: number) => {
+        setSelectedAdId(adId);
+        setActiveTab('prijave');
+        setLoading(true);
+        try {
+            const res = await adService.getApplicationsForAd(adId);
+            setApplications(res as JobApplication[]);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Greska pri dobavljanju prijava");
+        } finally {
+            setLoading(false);
+        }
+    };
     return (
         <div className="p-8 bg-white min-h-screen font-sans selection:bg-[#2bc3c3] selection:text-[#1a3a94]">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
@@ -16,18 +83,15 @@ export default function CompanyDashboard() {
                         WORK<span className="text-[#2bc3c3]">SPACE</span>
                     </h1>
                     <div className="flex gap-4 mt-4">
-                        <button
-                            onClick={() => setActiveTab('oglasi')}
-                            className={`cursor-pointer text-xs font-black uppercase tracking-[0.2em] pb-1 border-b-4 transition-all ${activeTab === 'oglasi' ? 'border-[#2bc3c3] text-[#1a3a94]' : 'border-transparent text-gray-400 hover:text-[#1a3a94]'}`}
-                        >
-                            Moji Oglasi
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('prijave')}
-                            className={`cursor-pointer text-xs font-black uppercase tracking-[0.2em] pb-1 border-b-4 transition-all ${activeTab === 'prijave' ? 'border-[#2bc3c3] text-[#1a3a94]' : 'border-transparent text-gray-400 hover:text-[#1a3a94]'}`}
-                        >
-                            Pristigle Prijave
-                        </button>
+                        {['oglasi', 'prijave'].map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab as any)}
+                                className={`cursor-pointer text-xs font-black uppercase tracking-[0.2em] pb-1 border-b-4 transition-all ${activeTab === tab ? 'border-[#2bc3c3] text-[#1a3a94]' : 'border-transparent text-gray-400 hover:text-[#1a3a94]'}`}
+                            >
+                                {tab === 'oglasi' ? 'Moji Oglasi' : 'Pristigle Prijave'}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
@@ -36,99 +100,85 @@ export default function CompanyDashboard() {
                         <div className="flex items-center justify-center w-6 h-6 bg-white border-2 border-[#1a3a94] transition-all duration-300 group-hover:-translate-y-1 group-hover:-translate-x-1 group-hover:shadow-[4px_4px_0px_0px_rgba(26,58,148,1)]">
                             <Plus size={14} className="text-[#1a3a94]" strokeWidth={4} />
                         </div>
-                        <span className="text-white text-sm font-[1000] uppercase tracking-widest transition-colors duration-300 group-hover:text-[#1a3a94]">
-                            Novi oglas
-                        </span>
+                        <span className="text-white text-sm font-[1000] uppercase tracking-widest transition-colors duration-300 group-hover:text-[#1a3a94]">Novi oglas</span>
                     </div>
-                    <div className="absolute bottom-0 left-0 w-full h-[4px] bg-[#1a3a94] opacity-0 group-hover:opacity-100 transition-all" />
                 </button>
             </div>
 
-            <div className="relative">
-                {activeTab === 'oglasi' ? (
-                    ads && ads.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-4">
-                            {ads.map((ad) => (
-                                <div key={ad.id} className="group border-4 border-[#1a3a94] p-6 hover:bg-[#1a3a94] transition-all flex items-center justify-between shadow-[8px_8px_0px_0px_rgba(43,195,195,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1">
-                                    <div className="flex items-center gap-6">
-                                        <div className="bg-[#2bc3c3] p-4 border-2 border-[#1a3a94] group-hover:bg-white transition-colors">
-                                            <Briefcase className="text-[#1a3a94]" size={32} />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-2xl font-black uppercase tracking-tighter text-[#1a3a94] group-hover:text-white">
-                                                {ad.title}
-                                            </h3>
-                                            <div className="flex gap-3 mt-1">
-                                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#2bc3c3]">{ad.jobType}</span>
-                                                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 group-hover:text-gray-300 italic">{ad.location}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-8">
-                                        <div className="text-center">
-                                            <p className="text-3xl font-[1000] text-[#1a3a94] group-hover:text-[#2bc3c3] leading-none">
-                                                {ad._count?.applications || 0}
-                                            </p>
-                                            <p className="text-[9px] font-black uppercase text-gray-400 group-hover:text-white/50">Prijave</p>
-                                        </div>
-                                        <div className="flex flex-col gap-1">
-                                            <button className="bg-white border-2 border-[#1a3a94] p-2 text-[#1a3a94] hover:bg-[#2bc3c3] transition-colors cursor-pointer">
-                                                <Search size={16} strokeWidth={3} />
-                                            </button>
-                                            <button className="bg-white border-2 border-[#1a3a94] p-2 text-[#1a3a94] hover:bg-red-400 transition-colors cursor-pointer">
-                                                <XCircle size={16} strokeWidth={3} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+            {loading ? <LoadingState /> : error ? <ErrorState message={error} /> : (
+                <div className="relative">
+                    {activeTab === 'oglasi' ? (
+                        ads.length > 0 ? (
+                            <div className="grid grid-cols-1 gap-4">
+                                {ads.map(ad => (
+                                    <AdCard
+                                        key={ad.id}
+                                        ad={ad}
+                                        onSelect={handleSelectAd}
+                                        onDelete={handleDeleteClick}
+                                        onEdit={() => handleEditClick(ad)}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center p-20 border-4 border-dashed border-gray-200">
+                                <AlertCircle size={48} className="text-gray-300 mb-4" />
+                                <h2 className="text-3xl font-black text-[#1a3a94] uppercase">Niste objavili oglas</h2>
+                                <button onClick={() => setIsModalOpen(true)} className="mt-8 cursor-pointer bg-[#2bc3c3] border-4 border-[#1a3a94] px-10 py-4 text-[#1a3a94] font-[1000] uppercase shadow-[6px_6px_0px_0px_rgba(26,58,148,1)] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-none">Napravite prvi oglas</button>
+                            </div>
+                        )
                     ) : (
-                        <div className="flex flex-col items-center justify-center p-20 border-4 border-dashed border-gray-200 bg-gray-50/50">
-                            <AlertCircle size={48} className="text-gray-300 mb-4" />
-                            <h2 className="text-3xl font-black text-[#1a3a94] uppercase tracking-tighter">Niste objavili ni jedan oglas</h2>
-                            <p className="text-gray-400 font-bold uppercase tracking-widest text-xs mt-2 mb-8">Vasa lista oglasa je trenutno prazna</p>
-                            <button onClick={() => setIsModalOpen(true)} className="cursor-pointer bg-[#2bc3c3] border-4 border-[#1a3a94] px-10 py-4 text-[#1a3a94] font-[1000] uppercase tracking-widest shadow-[6px_6px_0px_0px_rgba(26,58,148,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                                Napravite prvi oglas
-                            </button>
-                        </div>
-                    )
-                ) : (
-                    <div className="relative border-4 border-[#1a3a94] p-20 bg-white overflow-hidden shadow-[12px_12px_0px_0px_rgba(26,58,148,0.05)]">
-                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" />
-                        
-                        <div className="relative z-10 flex flex-col items-center text-center">
-                            <div className="mb-6 relative">
-                                <div className="absolute -inset-4 bg-[#2bc3c3] opacity-20 blur-xl rounded-full animate-pulse" />
-                                <MousePointer2 size={64} className="text-[#1a3a94] relative rotate-12" strokeWidth={2.5} />
+                        selectedAdId ? (
+                            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
+                                <div className="flex justify-between items-end border-b-8 border-[#1a3a94] pb-4 mb-8">
+                                    <h2 className="text-4xl font-[1000] uppercase tracking-tighter text-[#1a3a94]">KANDIDATI ZA <span className="text-[#2bc3c3]">OGLAS #{selectedAdId}</span></h2>
+                                    <button onClick={() => { setSelectedAdId(null); setActiveTab('oglasi'); }} className="cursor-pointer bg-[#1a3a94] text-white px-6 py-2 text-[10px] font-black uppercase hover:bg-red-500 transition-colors">Zatvori</button>
+                                </div>
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    {applications.length > 0 ? applications.map(app => <ApplicationCardDesh key={app.id} app={app} />) : <p className="text-gray-400 font-black uppercase italic">Nema prijava za ovaj oglas.</p>}
+                                </div>
                             </div>
-                            
-                            <h2 className="text-4xl font-[1000] uppercase text-[#1a3a94] tracking-tighter mb-4">
-                                Izaberite <span className="text-[#2bc3c3]">Oglas</span>
-                            </h2>
-                            
-                            <div className="max-w-md">
-                                <p className="text-gray-400 font-bold text-sm uppercase tracking-[0.2em] leading-relaxed">
-                                    Da biste videli prijave i kandidate, morate prvo oznaciti oglas na listi oglasa.
-                                </p>
+                        ) : (
+                            <div className="relative border-4 border-[#1a3a94] p-20 text-center bg-white shadow-[12px_12px_0px_0px_rgba(26,58,148,0.05)]">
+                                <MousePointer2 size={64} className="text-[#1a3a94] mx-auto mb-4 rotate-12" />
+                                <h2 className="text-4xl font-[1000] uppercase text-[#1a3a94]">Izaberite <span className="text-[#2bc3c3]">Oglas</span></h2>
+                                <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Prvo označite oglas u listi da biste videli kandidate.</p>
                             </div>
-
-                            <button 
-                                onClick={() => setActiveTab('oglasi')}
-                                className="mt-8 flex items-center gap-2 text-[#1a3a94] font-black uppercase text-[10px] tracking-widest border-b-2 border-[#1a3a94] hover:text-[#2bc3c3] hover:border-[#2bc3c3] transition-all cursor-pointer"
-                            >
-                                Idi na listu oglasa <Search size={14} />
-                            </button>
-                        </div>
-                    </div>
-                )}
-            </div>
+                        )
+                    )}
+                </div>
+            )}
 
             <div className="fixed bottom-0 right-0 p-4 opacity-10 pointer-events-none select-none">
                 <h1 className="text-[150px] font-black leading-none">HUB</h1>
             </div>
-            <CreateAdModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+            <CreateAdModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={fetchAds}
+            />
+            {selectedAdToEdit && (
+                <EditAdModal
+                    key={selectedAdToEdit.id}
+                    isOpen={isEditModalOpen}
+                    onClose={() => {
+                        setIsEditModalOpen(false);
+                        setSelectedAdToEdit(null);
+                    }}
+                    onSuccess={fetchAds}
+                    adToEdit={selectedAdToEdit}
+                />
+            )}
+            <ConfirmPopup
+                isOpen={confirmConfig.isOpen}
+                onClose={() => setConfirmConfig({ isOpen: false, adId: null })}
+                onConfirm={handleActualDelete}
+                title="Brisanje Oglasa"
+                message="Da li ste sigurni da zelite da obrisete ovaj oglas? Ova akcija je nepovratna."
+                confirmText="Obrisi"
+                type="warning"
+            />
         </div>
     );
 }
