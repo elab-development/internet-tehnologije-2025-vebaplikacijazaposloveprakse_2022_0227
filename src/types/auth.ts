@@ -9,7 +9,7 @@ export interface RegisterData {
     firstName: string;
     lastName: string;
     phone?: string;
-    role: "STUDENT" | "COMPANY" | "ADMIN";
+    role: Role;
     
     // Student fields
     studentIndex?: string;
@@ -22,6 +22,11 @@ export interface RegisterData {
     industry?: string;
     website?: string;
     location?: string;
+}
+export enum Role {
+    STUDENT = "STUDENT",
+    COMPANY = "COMPANY",
+    ADMIN = "ADMIN",
 }
 export interface AuthResponse {
     message: string;

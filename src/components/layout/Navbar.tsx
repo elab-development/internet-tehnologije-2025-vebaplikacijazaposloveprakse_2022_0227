@@ -4,10 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { LogIn, Building2, BriefcaseBusiness, Info, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { Role } from "@/src/types/auth";
 
 export default function Navbar() {
     const { user, loading, logout } = useAuth();
-
+    const isManagement = user?.role === Role.COMPANY || user?.role === Role.ADMIN;
     return (
         <div className="fixed top-0 w-full z-50 border-b border-zinc-200 bg-white/90 backdrop-blur-xl">
             <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -23,6 +24,7 @@ export default function Navbar() {
                             />
                         </Link>
                     </div>
+                    {!isManagement && (
                     <div className="hidden lg:flex items-center gap-6 h-full">
                         <div className="flex items-center gap-2 group cursor-pointer h-full">
                             <BriefcaseBusiness size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
@@ -44,6 +46,7 @@ export default function Navbar() {
                             </Link>
                         </div>
                     </div>
+                    )}
                 </div>
                 <div className="flex items-center gap-8 h-full">
                     {!user ? (

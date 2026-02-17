@@ -154,7 +154,7 @@ export default function CompanyProfileDesign() {
           {activeAdsCount > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-t-2 border-l-2 border-career-blue/10">
               {(company as any).ads.map((item: any) => (
-                <OpportunityCard key={item.adId} item={item} />
+                <OpportunityCard item={item} />
               ))}
             </div>
           ) : (
