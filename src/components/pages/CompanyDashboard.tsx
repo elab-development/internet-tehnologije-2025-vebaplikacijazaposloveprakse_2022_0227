@@ -2,10 +2,12 @@
 import { useState } from 'react';
 import { Ad, JobStatus, JobType } from "@/src/types/ad";
 import { Plus, Users, Briefcase, Search, XCircle, AlertCircle, MousePointer2 } from "lucide-react";
+import CreateAdModal from '../companies/CreateAdModal';
 
 export default function CompanyDashboard() {
     const [activeTab, setActiveTab] = useState<'oglasi' | 'prijave'>('oglasi');
     const [ads, setAds] = useState<Ad[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     return (
         <div className="p-8 bg-white min-h-screen font-sans selection:bg-[#2bc3c3] selection:text-[#1a3a94]">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
@@ -29,7 +31,7 @@ export default function CompanyDashboard() {
                     </div>
                 </div>
 
-                <button className="cursor-pointer group relative px-8 py-4 bg-[#1a3a94] border-2 border-[#1a3a94] transition-all duration-300 active:scale-95 hover:bg-[#2bc3c3] hover:border-[#1a3a94]">
+                <button onClick={() => setIsModalOpen(true)} className="cursor-pointer group relative px-8 py-4 bg-[#1a3a94] border-2 border-[#1a3a94] transition-all duration-300 active:scale-95 hover:bg-[#2bc3c3] hover:border-[#1a3a94]">
                     <div className="relative flex items-center gap-3">
                         <div className="flex items-center justify-center w-6 h-6 bg-white border-2 border-[#1a3a94] transition-all duration-300 group-hover:-translate-y-1 group-hover:-translate-x-1 group-hover:shadow-[4px_4px_0px_0px_rgba(26,58,148,1)]">
                             <Plus size={14} className="text-[#1a3a94]" strokeWidth={4} />
@@ -87,7 +89,7 @@ export default function CompanyDashboard() {
                             <AlertCircle size={48} className="text-gray-300 mb-4" />
                             <h2 className="text-3xl font-black text-[#1a3a94] uppercase tracking-tighter">Niste objavili ni jedan oglas</h2>
                             <p className="text-gray-400 font-bold uppercase tracking-widest text-xs mt-2 mb-8">Vasa lista oglasa je trenutno prazna</p>
-                            <button className="cursor-pointer bg-[#2bc3c3] border-4 border-[#1a3a94] px-10 py-4 text-[#1a3a94] font-[1000] uppercase tracking-widest shadow-[6px_6px_0px_0px_rgba(26,58,148,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
+                            <button onClick={() => setIsModalOpen(true)} className="cursor-pointer bg-[#2bc3c3] border-4 border-[#1a3a94] px-10 py-4 text-[#1a3a94] font-[1000] uppercase tracking-widest shadow-[6px_6px_0px_0px_rgba(26,58,148,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
                                 Napravite prvi oglas
                             </button>
                         </div>
@@ -126,6 +128,7 @@ export default function CompanyDashboard() {
             <div className="fixed bottom-0 right-0 p-4 opacity-10 pointer-events-none select-none">
                 <h1 className="text-[150px] font-black leading-none">HUB</h1>
             </div>
+            <CreateAdModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         </div>
     );
 }

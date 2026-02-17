@@ -8,6 +8,7 @@ import { useState } from "react";
 import { authService } from "@/src/services/authService";
 import { useRouter } from "next/navigation";
 import { RegisterSchema } from "@/src/lib/validators/auth";
+import { RegisterData, Role } from "@/src/types/auth";
 
 export default function RegisterPage() {
     //----------------------------------------------------------------------------------//
@@ -31,7 +32,7 @@ export default function RegisterPage() {
         const data = Object.fromEntries(formData.entries());
         const payload = {
             ...data,
-            role: isStudent ? "STUDENT" : "COMPANY",
+            role: isStudent ? Role.STUDENT : Role.COMPANY,
         };
         const validatedData = RegisterSchema.safeParse(payload);
         if (!validatedData.success) {
@@ -40,7 +41,7 @@ export default function RegisterPage() {
             return;
         }
         try {
-            await authService.register(validatedData.data);
+            await authService.register(validatedData.data as RegisterData);
             router.push("/login?registered=success");
         } catch (err) {
             setError(err instanceof Error ? err.message : "Doslo je do greske tokom registracije.");

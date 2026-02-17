@@ -32,6 +32,6 @@ export interface AuthResponse {
     message: string;
     user?: {
         email: string;
-        role: string;
+        role: Role;
     };
 }
