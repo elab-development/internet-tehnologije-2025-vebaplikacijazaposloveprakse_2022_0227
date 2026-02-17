@@ -2,7 +2,7 @@ import { db } from "@/src/lib/db";
 import { JobStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
         const companyId = parseInt(id);

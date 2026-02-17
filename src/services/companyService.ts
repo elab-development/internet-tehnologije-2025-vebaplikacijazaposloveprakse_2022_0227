@@ -20,5 +20,15 @@ export const companyService = {
         if (!res.ok) throw new Error(result.message || "Greska pri dobijanju kompanije");
         
         return result;
+    },
+    async getRandomCompanies(): Promise<Company[]> {
+        const res = await fetch(`/api/companies/random`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message || "Greska pri dobijanju kompanija");
+        
+        return result;
     }
 }
