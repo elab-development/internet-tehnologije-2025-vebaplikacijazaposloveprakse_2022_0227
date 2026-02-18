@@ -70,7 +70,22 @@ export default function AdDetailsPage() {
     <ErrorState message={error || "Oglas nije pronađen"} />
   );
   const isExpired = new Date(ad.deadline) < new Date();
+  const getRequirements = () => {
+    try {
+      if (Array.isArray(ad.requirements)) return ad.requirements;
+      if (typeof ad.requirements === 'string') {
+        if (ad.requirements.startsWith('[')) {
+          return JSON.parse(ad.requirements);
+        }
+        return ad.requirements.split(',').map(s => s.trim());
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  };
 
+  const requirements = getRequirements();
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
@@ -185,8 +200,15 @@ export default function AdDetailsPage() {
         {/* Zahtevi */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Zahtevi</h2>
-          <div className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-            {ad.requirements}
+          <div className="flex flex-wrap gap-2 mb-10">
+            {requirements.map((skill:string, index:number) => (
+              <span
+                key={index}
+                className="px-3 py-1 bg-[#1a3a94] text-white text-[10px] font-[1000] uppercase tracking-widest border-2 border-[#1a3a94] shadow-[3px_3px_0px_0px_rgba(43,195,195,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all cursor-default"
+              >
+                {skill}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -284,7 +306,7 @@ export default function AdDetailsPage() {
                 ✓ Aplicirali ste
               </button>
             </div>
-          ) : applyError? (
+          ) : applyError ? (
             <div className="text-center">
               <p className="text-red-600 mb-4 font-medium">
                 Morate biti prijavljeni kao student.

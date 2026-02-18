@@ -39,5 +39,6 @@ export interface UpdateUserData {
     website?: string | null;
     taxNumber?: string;
     regNumber?: string | null;
+    logoUrl?: string | null;
   };
 }

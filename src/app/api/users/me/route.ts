@@ -34,6 +34,10 @@ export async function GET(req: NextRequest) {
             industry: true,
             website: true,
             location: true,
+            logoUrl: true,
+            description: true,
+            isApproved: true,
+            rejectReason: true,
           },
         },
       },
@@ -67,7 +71,7 @@ export async function PUT(req: Request) {
     }
     const { firstName, lastName, phone, // User podaci
       studentIndex, profileDescription, status, // polja za studenta
-      companyName, taxNumber, regNumber, industry, website, location // polja za firmu
+      companyName, taxNumber, regNumber, industry, website, location, logoUrl //polja za firmu
     } = validationData.data;
     const updatedUser = await db.user.update({
       where: { id: user.id },
@@ -93,6 +97,8 @@ export async function PUT(req: Request) {
               industry: industry || undefined,
               website: website || undefined,
               location: location || undefined,
+              logoUrl: logoUrl || undefined,
+              description: profileDescription || undefined
             },
           },
         }),

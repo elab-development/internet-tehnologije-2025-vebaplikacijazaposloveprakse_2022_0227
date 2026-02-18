@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { LogIn, Building2, BriefcaseBusiness, Info, LogOut } from "lucide-react";
+import { LogIn, Building2, BriefcaseBusiness, Info, LogOut, UserCircle } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { Role } from "@/src/types/auth";
 
 export default function Navbar() {
     const { user, loading, logout } = useAuth();
-
+    const isManagement = user?.role === Role.COMPANY || user?.role === Role.ADMIN;
     return (
         <div className="fixed top-0 w-full z-50 border-b border-zinc-200 bg-white/90 backdrop-blur-xl">
             <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -23,27 +24,29 @@ export default function Navbar() {
                             />
                         </Link>
                     </div>
-                    <div className="hidden lg:flex items-center gap-6 h-full">
-                        <div className="flex items-center gap-2 group cursor-pointer h-full">
-                            <BriefcaseBusiness size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
-                            <Link href="/ads" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
-                                Oglasi
-                            </Link>
-                        </div>
+                    {!isManagement && (
+                        <div className="hidden lg:flex items-center gap-6 h-full">
+                            <div className="flex items-center gap-2 group cursor-pointer h-full">
+                                <BriefcaseBusiness size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
+                                <Link href="/ads" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
+                                    Oglasi
+                                </Link>
+                            </div>
 
-                        <div className="flex items-center gap-2 group cursor-pointer h-full">
-                            <Building2 size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
-                            <Link href="/companies" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
-                                Kompanije
-                            </Link>
+                            <div className="flex items-center gap-2 group cursor-pointer h-full">
+                                <Building2 size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
+                                <Link href="/companies" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
+                                    Kompanije
+                                </Link>
+                            </div>
+                            <div className="flex items-center gap-2 group cursor-pointer h-full">
+                                <Info size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
+                                <Link href="/aboutus" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
+                                    O nama
+                                </Link>
+                            </div>
                         </div>
-                        <div className="flex items-center gap-2 group cursor-pointer h-full">
-                            <Info size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
-                            <Link href="/aboutus" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
-                                O nama
-                            </Link>
-                        </div>
-                    </div>
+                    )}
                 </div>
                 <div className="flex items-center gap-8 h-full">
                     {!user ? (
@@ -87,6 +90,16 @@ export default function Navbar() {
                                     {user.role === "COMPANY" ? user.companyProfile?.companyName : `${user.firstName} ${user.lastName}`}
                                 </span>
                             </div>
+                            <Link
+                                href="/profile"
+                                className="p-2.5 bg-[#f4f4f5] hover:bg-[#2bc3c3]/10 text-[#1a3a94] hover:text-[#2bc3c3] rounded-xl transition-all duration-200 group"
+                            >
+                                <UserCircle
+                                    size={24}
+                                    strokeWidth={2}
+                                    className="group-hover:scale-110 transition-transform duration-200"
+                                />
+                            </Link>
                             <button onClick={logout} className="cursor-pointer p-2.5 bg-red-50 hover:bg-red-500 rounded-xl text-red-500 hover:text-white transition-all">
                                 <LogOut size={20} />
                             </button>

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { authService } from "@/src/services/authService";
 import { useRouter } from "next/navigation";
 import { RegisterSchema } from "@/src/lib/validators/auth";
+import { RegisterData, Role } from "@/src/types/auth";
 
 export default function RegisterPage() {
     //----------------------------------------------------------------------------------//
@@ -31,7 +32,7 @@ export default function RegisterPage() {
         const data = Object.fromEntries(formData.entries());
         const payload = {
             ...data,
-            role: isStudent ? "STUDENT" : "COMPANY",
+            role: isStudent ? Role.STUDENT : Role.COMPANY,
         };
         const validatedData = RegisterSchema.safeParse(payload);
         if (!validatedData.success) {
@@ -40,7 +41,7 @@ export default function RegisterPage() {
             return;
         }
         try {
-            await authService.register(validatedData.data);
+            await authService.register(validatedData.data as RegisterData);
             router.push("/login?registered=success");
         } catch (err) {
             setError(err instanceof Error ? err.message : "Doslo je do greske tokom registracije.");
@@ -186,26 +187,14 @@ export default function RegisterPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-[#2bc3c3] ml-1">
-                                            Industrija
-                                        </label>
-                                        <div className="relative group">
-                                            <select
-                                                name="industry"
-                                                required
-                                                defaultValue=""
-                                                className="w-full px-6 py-4 bg-white border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-[#2bc3c3] transition-all font-bold text-gray-700 appearance-none cursor-pointer"
-                                            >
-                                                <option value="" disabled>Odaberi...</option>
-                                                <option value="IT">IT & Softver</option>
-                                                <option value="Marketing">Marketing</option>
-                                                <option value="Dizajn">Dizajn</option>
-                                                <option value="Finansije">Finansije</option>
-                                            </select>
-                                            <div className="absolute inset-y-0 right-0 flex items-center pr-6 pointer-events-none text-[#2bc3c3] group-focus-within:rotate-180 transition-transform duration-300">
-                                                <ChevronDown size={20} strokeWidth={3} />
-                                            </div>
-                                        </div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-[#2bc3c3] ml-1">Industrija</label>
+                                        <input
+                                            name="industry"
+                                            type="text"
+                                            required
+                                            placeholder="npr. Metalurgija"
+                                            className="w-full px-6 py-4 bg-white border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-[#2bc3c3] transition-all"
+                                        />
                                     </div>
                                 </div>
                                 <div className="space-y-2">

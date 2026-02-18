@@ -7,7 +7,7 @@ export const RegisterBaseSchema = z.object({
   firstName: z.string().min(2, { error: "Ime je obavezno" }),
   lastName: z.string().min(2, { error: "Prezime je obavezno" }),
   phone: z.string().min(2, { error: "Telefon je obavezan" }),
-  role: z.enum(Role).default("STUDENT"),
+  role: z.enum(Role).default(Role.STUDENT),
 
   companyName: z.string().optional(),
   taxNumber: z.string().optional(),
