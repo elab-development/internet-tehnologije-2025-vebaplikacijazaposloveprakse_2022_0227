@@ -11,6 +11,7 @@ export interface Company {
     location: string;
     isApproved: boolean;   
     rejectReason?: string | null; 
+    logoUrl?: string | null;
     user?: {
         email: string;
         firstName: string;

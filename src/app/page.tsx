@@ -1,8 +1,8 @@
 'use client';
 
-import { AdminDashboard } from "../components/pages/AdminDashboard";
-import CompanyDashboard from "../components/pages/CompanyDashboard";
-import LandingPage from "../components/pages/LandingPage";
+import { AdminDashboard } from "../components/pages/dashboards/AdminDashboard";
+import CompanyDashboard from "../components/pages/dashboards/CompanyDashboard";
+import LandingPage from "../components/pages/dashboards/LandingPage";
 import { LoadingState } from "../components/ui/LoadingState";
 import { useAuth } from "../context/AuthContext";
 import { Role } from "../types/auth";

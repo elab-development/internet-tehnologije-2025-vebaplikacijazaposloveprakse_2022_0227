@@ -2,15 +2,15 @@
 import { useEffect, useState } from 'react';
 import { Ad } from "@/src/types/ad";
 import { Plus, AlertCircle, MousePointer2, Filter, Inbox } from "lucide-react";
-import CreateAdModal from '../companies/CreateAdModal';
+import CreateAdModal from '../../companies/CreateAdModal';
 import { adService } from '@/src/services/adService';
-import { LoadingState } from '../ui/LoadingState';
-import { ErrorState } from '../ui/ErrorState';
+import { LoadingState } from '../../ui/LoadingState';
+import { ErrorState } from '../../ui/ErrorState';
 import { ApplicationStatus, JobApplication } from '@/src/types/jobApplication';
-import { AdCard } from '../companies/AdCard';
-import { ApplicationCardDesh } from '../companies/ApplicationCardDesh';
-import { ConfirmPopup } from '../ui/ConfirmPopup';
-import EditAdModal from '../companies/EditAdModal';
+import { AdCard } from '../../companies/AdCard';
+import { ApplicationCardDesh } from '../../companies/ApplicationCardDesh';
+import { ConfirmPopup } from '../../ui/ConfirmPopup';
+import EditAdModal from '../../companies/EditAdModal';
 import { applicationService } from '@/src/services/applicationService';
 import { useRouter, useSearchParams } from 'next/navigation';
 

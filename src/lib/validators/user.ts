@@ -11,7 +11,7 @@ export const UpdateUserSchema = z.object({
   industry: z.string().optional(),
   website: z.url({ error: "Neispravan URL" }).optional(),
   location: z.string().optional(),
-
+  logoUrl: z.url({ error: "Neispravan URL" }).optional(),
   studentIndex: z.string().optional(),
   profileDescription: z.string().max(500, { error: "Maksimalno 500 karaktera" }).optional(),
   status: z.enum(StudentStatus).optional(),
