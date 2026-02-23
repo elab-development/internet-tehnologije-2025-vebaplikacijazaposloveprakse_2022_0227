@@ -2,7 +2,7 @@ import { db } from "@/src/lib/db";
 import { ApplicationStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
         const adId = parseInt(id);
