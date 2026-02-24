@@ -1,7 +1,7 @@
 import { db } from "@/src/lib/db";
 import { CreateAdSchema } from "@/src/lib/validators/ad";
 import { Role } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -27,7 +27,7 @@ export async function GET() {
     return NextResponse.json({ message: "Greska pri dobavljanju oglasa" }, { status: 500 });
   }
 }
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const userID = request.headers.get("x-user-id");
     const userRole = request.headers.get("x-user-role");

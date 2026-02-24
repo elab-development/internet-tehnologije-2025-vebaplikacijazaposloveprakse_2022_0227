@@ -1,5 +1,6 @@
 import { Role } from "@prisma/client";
 import { StudentStatus } from "@prisma/client";
+import { Company } from "./company";
 export interface BaseUser {
     id: number;
     email: string;
@@ -7,24 +8,19 @@ export interface BaseUser {
     lastName: string;
     phone: string | null;
     role: Role;
+    isBanned: boolean;      
+    banReason?: string | null;
+    createdAt: Date;
 }
 export interface StudentProfile {
     studentIndex: string;
     profileDescription?: string | null;
     status: StudentStatus;
 }
-export interface CompanyProfile {
-    companyName: string;
-    taxNumber: string;
-    regNumber: string;
-    industry: string;
-    website?: string | null;
-    location: string;
-}
 
 export type AuthUser = BaseUser & {
     studentProfile?: StudentProfile | null;
-    companyProfile?: CompanyProfile | null;
+    companyProfile?: (Company & { isApproved: boolean, rejectReason?: string | null }) | null;
 };
 
 export interface UpdateUserData {
@@ -43,5 +39,6 @@ export interface UpdateUserData {
     website?: string | null;
     taxNumber?: string;
     regNumber?: string | null;
+    logoUrl?: string | null;
   };
 }

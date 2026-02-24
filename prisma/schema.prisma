@@ -38,6 +38,8 @@ model User {
     lastName String
     phone String?
     role Role @default(STUDENT)
+    isBanned Boolean @default(false)
+    banReason String?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     studentProfile Student?
@@ -60,10 +62,12 @@ model Company {
     taxNumber String @unique
     regNumber String @unique
     industry String
-    website String
+    website String?
+    description String?
     location String
     logoUrl String?
     isApproved    Boolean   @default(false)
+    rejectReason  String?
     ads  Ad[]
 }
 model Ad {

@@ -1,12 +1,14 @@
 import { db } from "@/src/lib/db";
 import { UpdateAdSchema } from "@/src/lib/validators/ad";
 import { Role } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const adId = parseInt(id);
+    const userId = req.headers.get("x-user-id");
+    const userRole = req.headers.get("x-user-role");
     if (isNaN(adId)) {
       return NextResponse.json({ message: "Nevalidan ID oglasa" }, { status: 400 });
     }
@@ -18,6 +20,17 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
             companyId: true,
             companyName: true,
             location: true,
+            description: true,
+            industry: true,  
+            website: true,    
+            user: {          
+              select: {
+                email: true,
+                firstName: true,
+                lastName: true,
+                phone: true,
+              }
+            }
           },
         },
         _count: {
@@ -28,13 +41,23 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     if (!ad) {
       return NextResponse.json({ message: "Oglas nije pronadjen" }, { status: 404 });
     }
-    return NextResponse.json(ad, { status: 200 });
+    let hasApplied = false;
+    if (userId && userRole === Role.STUDENT) {
+      const application = await db.jobApplication.findFirst({
+        where: {
+          adId: adId,
+          studentId: parseInt(userId),
+        },
+      });
+      hasApplied = !!application; 
+    }
+    return NextResponse.json({...ad, hasApplied}, { status: 200 });
   } catch (error) {
     return NextResponse.json({ message: "Greska pri dobavljanju oglasa" }, { status: 500 });
   }
 }
 
-export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const body = await req.json();
     if (!body) return NextResponse.json({ message: "Nedostaje telo zahteva" }, { status: 400 });
@@ -79,7 +102,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     return NextResponse.json({ message: "Greska pri azuriranju oglasa" }, { status: 500 });
   }
 }
-export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const userRole = req.headers.get("x-user-role");
     const userId = req.headers.get("x-user-id");

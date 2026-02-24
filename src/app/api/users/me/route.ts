@@ -1,10 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/src/lib/db";
 import { UpdateUserData } from "@/src/types/user";
 import { UpdateUserSchema } from "@/src/lib/validators/user";
 import { Role } from "@prisma/client";
 import { getUserFromRequest } from "@/src/lib/requestHelper";
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     const user = getUserFromRequest(req);
     if (!user) {
@@ -34,6 +34,10 @@ export async function GET(req: Request) {
             industry: true,
             website: true,
             location: true,
+            logoUrl: true,
+            description: true,
+            isApproved: true,
+            rejectReason: true,
           },
         },
       },
@@ -67,7 +71,7 @@ export async function PUT(req: Request) {
     }
     const { firstName, lastName, phone, // User podaci
       studentIndex, profileDescription, status, // polja za studenta
-      companyName, taxNumber, regNumber, industry, website, location // polja za firmu
+      companyName, taxNumber, regNumber, industry, website, location, logoUrl //polja za firmu
     } = validationData.data;
     const updatedUser = await db.user.update({
       where: { id: user.id },
@@ -93,6 +97,8 @@ export async function PUT(req: Request) {
               industry: industry || undefined,
               website: website || undefined,
               location: location || undefined,
+              logoUrl: logoUrl || undefined,
+              description: profileDescription || undefined
             },
           },
         }),

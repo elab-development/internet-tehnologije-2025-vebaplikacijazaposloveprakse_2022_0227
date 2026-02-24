@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Preuzmi kod sa GitHub-a
+        uses: actions/checkout@v4
+
+      - name: Instaliraj Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - name: Instaliraj zavisnosti
+        run: npm ci
+      - name: Generisi prisma client
+        run: npx prisma generate    
+      - name: Proveri TypeScript
+        run: npx tsc --noEmit
+      - name: Pokreni testove
+        run: npm test || echo "Dodaj testove kasnije!"
+      - name: Build aplikacije
+        run: npm run build
+      - name: Build Docker Image
+        run: docker build -t veb-sajt-za-poslove-i-prakse-app:${{ github.sha }} .

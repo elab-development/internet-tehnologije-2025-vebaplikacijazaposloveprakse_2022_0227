@@ -1,9 +1,9 @@
 import { db } from "@/src/lib/db";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Role } from "@prisma/client";
 import { RegisterSchema } from "@/src/lib/validators/auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     try {
         let body;
         try {
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
                 { status: 409 }
             );
         }
-        if (role == "COMPANY") {
+        if (role === Role.COMPANY) {
             const existingCompany = await db.company.findFirst({
                 where: {
                     OR: [
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
                 );
             }
         }
-        if (role === "STUDENT") {
+        if (role === Role.STUDENT) {
             const existingStudent = await db.student.findUnique({
                 where: { studentIndex },
                 select: { studentId: true }
@@ -59,9 +59,9 @@ export async function POST(req: Request) {
             if (existingStudent) return NextResponse.json({ message: "Student sa ovim brojem indeksa vec postoji." }, { status: 409 });
         }
         const hashedPassword = await bcrypt.hash(password, 12);
-        await db.$transaction(async (prisma) => {
-            const userRole = role === "COMPANY" ? "COMPANY" : "STUDENT";
-            const newUser = await prisma.user.create({
+        await db.$transaction(async (tx) => {
+            const userRole = role === Role.COMPANY ? Role.COMPANY : Role.STUDENT;
+            const newUser = await tx.user.create({
                 data: {
                     email,
                     firstName,
@@ -71,8 +71,8 @@ export async function POST(req: Request) {
                     role: userRole
                 }
             });
-            if (userRole == "COMPANY") {
-                await prisma.company.create({
+            if (userRole === Role.COMPANY) {
+                await tx.company.create({
                     data: {
                         companyId: newUser.id,
                         companyName: companyName!,
@@ -85,8 +85,8 @@ export async function POST(req: Request) {
 
                     }
                 });
-            } else if (userRole == "STUDENT") {
-                await prisma.student.create({
+            } else if (userRole === Role.STUDENT) {
+                await tx.student.create({
                     data: {
                         studentId: newUser.id,
                         studentIndex: studentIndex!,
@@ -98,7 +98,6 @@ export async function POST(req: Request) {
         });
         return NextResponse.json({ message: "Uspesna registracija!" }, { status: 201 });
     } catch (error) {
-        console.error(error);
         return NextResponse.json({ message: "Greska na serveru" }, { status: 500 });
     }
 }
