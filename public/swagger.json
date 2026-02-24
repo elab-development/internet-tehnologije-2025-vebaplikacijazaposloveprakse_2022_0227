@@ -1,0 +1,114 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Doc",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/users": {
+      "get": {
+        "summary": "Get all users",
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post":{
+        "summary": "Create a new user",
+        "requestBody":{
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/CreateUserDto"
+                    }
+                }
+            }
+        }
+      },
+      "patch":{
+        "summary": "Update user",
+        "requestBody":{
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "$ref": "#/components/schemas/updateSchema"
+                    }
+                }
+            }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+            "name": {
+                "type": "string"
+            },
+            "email": {
+                "type": "string",
+                "format": "email"
+            },
+            "role": {
+                "type": "string",
+                "enum": ["admin", "user", "guest"]
+            },
+            "createdAt": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "required": ["id", "name", "email", "createdAt"]
+
+        }
+      },
+        "CreateUserDto": {
+            "type": "object",
+            "properties": {
+            "name": {
+                "type": "string"
+            },
+            "email": {
+                "type": "string",
+                "format": "email"
+            },
+            "role": {
+                "type": "string",
+                "enum": ["admin", "user", "guest"]
+            }
+            },
+            "required": ["name", "email"]
+        },
+        "updateSchema" : {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string",
+                    "format": "email"
+                },
+                "role": {
+                    "type": "string",
+                    "enum": ["admin", "user", "guest"]
+                }
+            }
+        }
+    }
+  }
+}
