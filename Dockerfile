@@ -9,7 +9,7 @@ RUN chown -R app:app /app
 USER app
 
 COPY --chown=app:app package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 COPY --chown=app:app . .
 
