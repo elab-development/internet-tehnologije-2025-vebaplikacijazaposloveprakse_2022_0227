@@ -1,21 +1,21 @@
-
-export interface JobApplication {
+export interface StudentApplication {
   id: number;
-  adId: number;
   studentId: number;
-  status: ApplicationStatus;
+  adId: number;
   appliedAt: Date;
-  updatedAt: Date;
-  student: {
-    studentId: number;
-    user: {
-      email: string;
-      firstName: string;
-      lastName: string;
-      phone: string | null;
+  status: string;
+  ad: {
+    id: number;
+    title: string;
+    jobType: string;
+    company: {
+      companyId: number;
+      companyName: string;
+      logoUrl: string | null;
     };
   };
 }
+
 export enum ApplicationStatus {
   PENDING = "PENDING",
   ACCEPTED = "ACCEPTED",

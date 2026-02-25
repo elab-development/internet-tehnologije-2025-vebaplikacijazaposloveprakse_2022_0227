@@ -52,6 +52,7 @@ model Student {
     status StudentStatus @default(STUDYING)
     profileDescription String?
     cvUrl String?
+    avatarUrl String?
     applications JobApplication[]
     savedAds SavedAd[]
 }

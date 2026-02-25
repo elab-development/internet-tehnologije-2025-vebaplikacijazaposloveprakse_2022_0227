@@ -15,4 +15,6 @@ export const UpdateUserSchema = z.object({
   studentIndex: z.string().optional(),
   profileDescription: z.string().max(500, { error: "Maksimalno 500 karaktera" }).optional(),
   status: z.enum(StudentStatus).optional(),
+  cvUrl: z.string().optional(),
+  avatarUrl: z.string().optional(),
 });
