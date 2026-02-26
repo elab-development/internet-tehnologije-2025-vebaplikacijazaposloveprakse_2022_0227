@@ -19,7 +19,7 @@ jobs:
           node-version: 22
           cache: 'npm'
       - name: Instaliraj zavisnosti
-        run: npm ci
+        run: npm install --legacy-peer-deps
       - name: Generisi prisma client
         run: npx prisma generate    
       - name: Proveri TypeScript
