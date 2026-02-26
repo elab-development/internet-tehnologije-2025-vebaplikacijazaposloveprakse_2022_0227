@@ -2,7 +2,7 @@
 import { usePathname } from "next/navigation"
 import Link from "next/link";
 import Image from "next/image";
-import { LogIn, Building2, BriefcaseBusiness, Info, LogOut, UserCircle } from "lucide-react";
+import { LogIn, Building2, BriefcaseBusiness, Info, LogOut, UserCircle, Newspaper } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { Role } from "@/src/types/auth";
 
@@ -45,6 +45,12 @@ export default function Navbar() {
                                 <Info size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
                                 <Link href="/aboutus" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
                                     O nama
+                                </Link>
+                            </div>
+                            <div className="flex items-center gap-2 group cursor-pointer h-full">
+                                <Newspaper size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
+                                <Link href="/news" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
+                                    Vesti
                                 </Link>
                             </div>
                         </div>
