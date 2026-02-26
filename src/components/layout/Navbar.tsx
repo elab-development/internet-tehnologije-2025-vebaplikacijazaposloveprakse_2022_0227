@@ -2,7 +2,7 @@
 import { usePathname } from "next/navigation"
 import Link from "next/link";
 import Image from "next/image";
-import { LogIn, Building2, BriefcaseBusiness, Info, LogOut, UserCircle, Newspaper } from "lucide-react";
+import { LogIn, Building2, BriefcaseBusiness, Info, LogOut, UserCircle, Newspaper, ChartPie } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { Role } from "@/src/types/auth";
 
@@ -51,6 +51,12 @@ export default function Navbar() {
                                 <Newspaper size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
                                 <Link href="/news" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
                                     Vesti
+                                </Link>
+                            </div>
+                            <div className="flex items-center gap-2 group cursor-pointer h-full">
+                                <ChartPie size={18} className="text-zinc-400 group-hover:text-hub-cyan transition-colors" />
+                                <Link href="/stats" className="text-sm font-semibold text-zinc-600 group-hover:text-career-blue transition-colors">
+                                    Statistika
                                 </Link>
                             </div>
                         </div>
