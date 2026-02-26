@@ -11,9 +11,15 @@ import CompaniesSection from "@/src/components/layout/CompaniesSection";
 import { adzunaService } from "@/src/services/publicAPI/adzunaService";
 
 const ALL_POSITIONS = [
-  "Software Engineer", "Web Developer", "Data Analyst", 
-  "DevOps Engineer", "Backend Developer", "Mobile Developer",
-  "Cloud Engineer", "Machine Learning Engineer", "QA Engineer",
+  "Software Engineer",
+  "Web Developer", 
+  "DevOps Engineer",
+  "Cloud Engineer",
+  "Java Developer",
+  "Python Developer",
+  "Backend Developer",
+  "Mobile Developer",
+  "QA Engineer",
   "Full Stack Developer"
 ];
 
@@ -48,7 +54,6 @@ export default function LandingPage() {
             results[position] = months.length > 0 ? Math.round(months[months.length - 1]) : null;
           } catch (err) {
             results[position] = null;
-            setError(err instanceof Error ? err.message : `Greska pri dobavljanju plata za ${position}`);
           }
         })
       );
