@@ -2,6 +2,51 @@ import { db } from "@/src/lib/db";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/admin/users/{id}:
+ *   patch:
+ *     summary: Banuj, unbanuj ili odobri korisnika
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Korisnik uspesno azuriran
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       404:
+ *         description: Korisnik nije pronadjen
+ *       500:
+ *         description: Greska na serveru
+ *   delete:
+ *     summary: Obrisi korisnika
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Korisnik uspesno obrisan
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       404:
+ *         description: Korisnik nije pronadjen
+ *       500:
+ *         description: Greska na serveru
+ */
+
 
 //-----------BAN/UNBAN USER AND APPROVED COMPANY-----------//
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

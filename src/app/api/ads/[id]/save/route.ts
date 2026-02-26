@@ -2,6 +2,29 @@ import { db } from "@/src/lib/db";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/ads/{id}/save:
+ *   post:
+ *     summary: Sacuvaj ili ukloni oglas iz sacuvanih
+ *     tags: [Oglasi]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Oglas sacuvan ili uklonjen
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id: adIdStr } = await params;

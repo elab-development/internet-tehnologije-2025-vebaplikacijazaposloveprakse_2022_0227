@@ -2,6 +2,72 @@ import { db } from "@/src/lib/db";
 import { ApplicationStatus, JobStatus, Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/application/{id}:
+ *   post:
+ *     summary: Apliciraj na oglas
+ *     tags: [Prijave]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       201:
+ *         description: Uspesno apliciran
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       404:
+ *         description: Oglas nije pronadjen
+ *       409:
+ *         description: Vec ste aplicirali
+ *       500:
+ *         description: Greska na serveru
+ *   put:
+ *     summary: Azuriraj status prijave
+ *     tags: [Prijave]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Status uspesno azuriran
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       500:
+ *         description: Greska na serveru
+ *   delete:
+ *     summary: Obrisi prijavu
+ *     tags: [Prijave]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Prijava uspesno obrisana
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       404:
+ *         description: Prijava nije pronadjena
+ *       500:
+ *         description: Greska na serveru
+ */
+
+
 export async function POST(req: NextRequest,{ params }: { params: Promise<{ id: string }> }) {
     try {
         const userId = req.headers.get("x-user-id");

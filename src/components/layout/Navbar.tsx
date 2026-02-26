@@ -1,5 +1,5 @@
 "use client";
-
+import { usePathname } from "next/navigation"
 import Link from "next/link";
 import Image from "next/image";
 import { LogIn, Building2, BriefcaseBusiness, Info, LogOut, UserCircle } from "lucide-react";
@@ -9,6 +9,8 @@ import { Role } from "@/src/types/auth";
 export default function Navbar() {
     const { user, loading, logout } = useAuth();
     const isManagement = user?.role === Role.COMPANY || user?.role === Role.ADMIN;
+    const pathname = usePathname();
+    if (pathname === "/docs") return null;
     return (
         <div className="fixed top-0 w-full z-50 border-b border-zinc-200 bg-white/90 backdrop-blur-xl">
             <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">

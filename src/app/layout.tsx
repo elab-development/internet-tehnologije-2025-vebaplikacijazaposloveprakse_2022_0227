@@ -4,7 +4,6 @@ import Navbar from "../components/layout/Navbar";
 import { AuthProvider } from "../context/AuthContext";
 import Footer from "../components/layout/Footer";
 
-
 export const metadata: Metadata = {
   title: "Career Hub",
   description: "Your Gateway to Exciting Job Opportunities",
@@ -20,9 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`antialiased`}
-      >
+      <body className={`antialiased`}>
         <AuthProvider>
           <Navbar />
           <main className="pt-20 min-h-screen">

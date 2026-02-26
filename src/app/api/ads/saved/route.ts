@@ -2,6 +2,23 @@ import { db } from "@/src/lib/db";
 import { JobStatus, JobType, Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/ads/saved:
+ *   get:
+ *     summary: Dohvati sacuvane oglase studenta
+ *     tags: [Oglasi]
+ *     responses:
+ *       200:
+ *         description: Lista sacuvanih oglasa
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function GET(req: NextRequest) {
     try {
         const userId = req.headers.get("x-user-id");

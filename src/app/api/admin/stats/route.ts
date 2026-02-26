@@ -3,6 +3,21 @@ import { AdminStats } from "@/src/types/adminStats";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/admin/stats:
+ *   get:
+ *     summary: Dohvati admin statistiku
+ *     tags: [Admin]
+ *     responses:
+ *       200:
+ *         description: Statistika uspesno dohvacena
+ *       403:
+ *         description: Nemate pristup
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function GET(req: NextRequest) {
     try{
         const userRole = req.headers.get("x-user-role");

@@ -2,6 +2,29 @@ import { db } from "@/src/lib/db";
 import { ApplicationStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/ads/{id}/applications:
+ *   get:
+ *     summary: Dohvati prijave za oglas
+ *     tags: [Prijave]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista prijava
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
