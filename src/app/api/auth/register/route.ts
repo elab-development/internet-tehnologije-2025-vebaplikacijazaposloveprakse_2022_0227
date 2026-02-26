@@ -3,6 +3,24 @@ import { PrismaClient, Role } from "@prisma/client";
 import { RegisterSchema } from "@/src/lib/validators/auth";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from 'bcrypt';
+
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Registracija novog korisnika
+ *     tags: [Auth]
+ *     responses:
+ *       201:
+ *         description: Uspesna registracija
+ *       400:
+ *         description: Nevalidni podaci
+ *       409:
+ *         description: Korisnik vec postoji
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function POST(req: NextRequest) {
     try {
         let body;

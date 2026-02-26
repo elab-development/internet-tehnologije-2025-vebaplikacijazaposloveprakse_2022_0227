@@ -2,6 +2,40 @@ import { db } from "@/src/lib/db";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/admin/users:
+ *   get:
+ *     summary: Dohvati sve korisnike (admin)
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema:
+ *           type: string
+ *         description: Pretraga po imenu, emailu ili indeksu
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *         description: Filter po roli
+ *       - in: query
+ *         name: isBanned
+ *         schema:
+ *           type: boolean
+ *       - in: query
+ *         name: isApproved
+ *         schema:
+ *           type: boolean
+ *     responses:
+ *       200:
+ *         description: Lista korisnika
+ *       403:
+ *         description: Nemate pristup
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function GET(req: NextRequest) {
     try{
         const userRole = req.headers.get("x-user-role");

@@ -1,4 +1,5 @@
-import { ApplicationStatus } from "../types/jobApplication";
+import { JobApplication } from "@prisma/client";
+import { ApplicationStatus, StudentApplication } from "../types/jobApplication";
 
 export const applicationService = {
     applyToAd: async (adId: number): Promise<void> => {
@@ -37,5 +38,16 @@ export const applicationService = {
         );
         const result = await res.json();
         if (!res.ok) throw new Error(result.message || "Greska pri brisanju prijave");
+    },
+    myApplications: async (): Promise<StudentApplication[]> => {
+        const res = await fetch(`/api/application`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.message || "Greska pri dohvatanju mojih prijava");
+        return result;
     }
 };

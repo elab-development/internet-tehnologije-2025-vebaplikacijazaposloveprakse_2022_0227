@@ -1,5 +1,6 @@
 "use client"
 import { CompanyProfile } from "@/src/components/pages/profiles/CompanyProfile";
+import { StudentProfile } from "@/src/components/pages/profiles/StudentProfile";
 import { ErrorState } from "@/src/components/ui/ErrorState";
 import { LoadingState } from "@/src/components/ui/LoadingState";
 import { useAuth } from "@/src/context/AuthContext";
@@ -11,10 +12,9 @@ export default function ProfilePage() {
     if (loading) return <LoadingState />;
     if (user?.role === Role.COMPANY) {
         return <CompanyProfile />;
-    }
-    // if (user?.role === Role.STUDENT) {
-    //     return <StudentProfile />;
-    // }
+    }else if (user?.role === Role.STUDENT) {
+         return <StudentProfile />;
+     }
     return (
         <ErrorState message="Niste autorizovani da pristupite ovom sadrzaju." />
     );

@@ -4,6 +4,34 @@ import { UpdateUserData } from "@/src/types/user";
 import { UpdateUserSchema } from "@/src/lib/validators/user";
 import { Role } from "@prisma/client";
 import { getUserFromRequest } from "@/src/lib/requestHelper";
+
+/**
+ * @swagger
+ * /api/users/me:
+ *   get:
+ *     summary: Dohvati profil ulogovanog korisnika
+ *     tags: [Korisnici]
+ *     responses:
+ *       200:
+ *         description: Profil korisnika
+ *       401:
+ *         description: Niste ulogovani
+ *       404:
+ *         description: Korisnik ne postoji
+ *       500:
+ *         description: Greska na serveru
+ *   put:
+ *     summary: Azuriraj profil ulogovanog korisnika
+ *     tags: [Korisnici]
+ *     responses:
+ *       200:
+ *         description: Profil uspesno azuriran
+ *       401:
+ *         description: Niste ulogovani
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function GET(req: NextRequest) {
   try {
     const user = getUserFromRequest(req);
@@ -24,6 +52,8 @@ export async function GET(req: NextRequest) {
             studentIndex: true,
             profileDescription: true,
             status: true,
+            cvUrl: true,
+            avatarUrl: true
           },
         },
         companyProfile: {
@@ -47,10 +77,11 @@ export async function GET(req: NextRequest) {
     }
     return NextResponse.json(userData, { status: 200 });
   } catch (error) {
+    console.error("GET Error:", error);
     return NextResponse.json({ message: "Token nije validan" }, { status: 401 });
   }
 }
-export async function PUT(req: Request) {
+export async function PUT(req: NextRequest) {
   try {
     const user = getUserFromRequest(req);
 
@@ -58,9 +89,11 @@ export async function PUT(req: Request) {
     let body: UpdateUserData;
     try {
       body = await req.json();
+      console.log("Body:", JSON.stringify(body));
     } catch (error) {
       return NextResponse.json({ message: "Invalid JSON body" }, { status: 400 });
     }
+    
     const validationData = UpdateUserSchema.safeParse(body);
     if (!validationData.success) {
       const firstErrorMessage = validationData.error.issues[0]?.message || "Validacija nije uspela";
@@ -70,7 +103,7 @@ export async function PUT(req: Request) {
       }, { status: 400 });
     }
     const { firstName, lastName, phone, // User podaci
-      studentIndex, profileDescription, status, // polja za studenta
+      studentIndex, profileDescription, status, avatarUrl, cvUrl, // polja za studenta
       companyName, taxNumber, regNumber, industry, website, location, logoUrl //polja za firmu
     } = validationData.data;
     const updatedUser = await db.user.update({
@@ -84,7 +117,9 @@ export async function PUT(req: Request) {
             update: {
               studentIndex: studentIndex || undefined,
               profileDescription: profileDescription || undefined,
-              status: status || undefined
+              status: status || undefined,
+              cvUrl: cvUrl || undefined,
+              avatarUrl: avatarUrl || undefined
             },
           },
         }),

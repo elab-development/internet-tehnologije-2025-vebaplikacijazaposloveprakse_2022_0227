@@ -1,5 +1,4 @@
 import { Role } from "@prisma/client";
-import { StudentStatus } from "@prisma/client";
 import { Company } from "./company";
 export interface BaseUser {
     id: number;
@@ -16,6 +15,8 @@ export interface StudentProfile {
     studentIndex: string;
     profileDescription?: string | null;
     status: StudentStatus;
+    cvUrl?: string | null;
+    avatarUrl?: string | null;
 }
 
 export type AuthUser = BaseUser & {
@@ -31,6 +32,8 @@ export interface UpdateUserData {
     studentIndex?: string;
     profileDescription?: string | null;
     status?: StudentStatus;
+    cvUrl?: string | null;
+    avatarUrl?: string | null;
   };
   companyProfile?: {
     companyName?: string;
@@ -41,4 +44,8 @@ export interface UpdateUserData {
     regNumber?: string | null;
     logoUrl?: string | null;
   };
+}
+export enum StudentStatus {
+  STUDYING = "STUDYING",
+  GRADUATED = "GRADUATED"
 }

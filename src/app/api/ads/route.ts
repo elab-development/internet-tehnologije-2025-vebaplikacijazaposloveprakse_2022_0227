@@ -3,6 +3,31 @@ import { CreateAdSchema } from "@/src/lib/validators/ad";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/ads:
+ *   get:
+ *     summary: Dohvati sve aktivne oglase
+ *     tags: [Oglasi]
+ *     responses:
+ *       200:
+ *         description: Lista oglasa
+ *       500:
+ *         description: Greska na serveru
+ *   post:
+ *     summary: Kreiraj novi oglas
+ *     tags: [Oglasi]
+ *     responses:
+ *       201:
+ *         description: Oglas uspesno kreiran
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function GET() {
   try {
     const adsResponse = await db.ad.findMany({

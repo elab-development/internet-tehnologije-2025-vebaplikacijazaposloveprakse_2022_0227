@@ -2,6 +2,23 @@ import { db } from "@/src/lib/db";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/ads/my-ads:
+ *   get:
+ *     summary: Dohvati oglase ulogovane kompanije
+ *     tags: [Oglasi]
+ *     responses:
+ *       200:
+ *         description: Lista oglasa kompanije
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function GET(req: NextRequest) {
       try {
         const userId = req.headers.get("x-user-id");
