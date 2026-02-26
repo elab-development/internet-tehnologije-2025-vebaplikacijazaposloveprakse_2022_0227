@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { swaggerSpec } from "../../lib/swagger";
-import SwaggerPage from "./SwaggerPage";
+import { swaggerSpec } from "../../../lib/swagger";
+import SwaggerPage from "../../../components/docs/SwaggerPage";
 
 export default function Page() {
   if (process.env.NODE_ENV !== "development") {
