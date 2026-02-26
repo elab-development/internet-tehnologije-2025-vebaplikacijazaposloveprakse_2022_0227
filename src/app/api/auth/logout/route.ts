@@ -1,5 +1,18 @@
 import { NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Odjava korisnika
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Uspesna odjava
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function POST() {
     try {
         const response = NextResponse.json(

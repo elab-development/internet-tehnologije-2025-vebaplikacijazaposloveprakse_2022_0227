@@ -3,6 +3,67 @@ import { UpdateAdSchema } from "@/src/lib/validators/ad";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/ads/{id}:
+ *   get:
+ *     summary: Dohvati oglas po ID-u
+ *     tags: [Oglasi]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Oglas uspesno dohvacen
+ *       404:
+ *         description: Oglas nije pronadjen
+ *       500:
+ *         description: Greska na serveru
+ *   put:
+ *     summary: Azuriraj oglas
+ *     tags: [Oglasi]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Oglas uspesno azuriran
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       404:
+ *         description: Oglas nije pronadjen
+ *       500:
+ *         description: Greska na serveru
+ *   delete:
+ *     summary: Obrisi oglas
+ *     tags: [Oglasi]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Oglas uspesno obrisan
+ *       401:
+ *         description: Niste ulogovani
+ *       403:
+ *         description: Nemate pristup
+ *       404:
+ *         description: Oglas nije pronadjen
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;

@@ -4,6 +4,26 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
 import { Role } from "@prisma/client";
+
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Prijava korisnika
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Uspesna prijava
+ *       400:
+ *         description: Vec ste ulogovani
+ *       401:
+ *         description: Pogresni kredencijali
+ *       403:
+ *         description: Nalog nije odobren
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function POST(req: NextRequest) {
     try {
         const cookieStore = await cookies();

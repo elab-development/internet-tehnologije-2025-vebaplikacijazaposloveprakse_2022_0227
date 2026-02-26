@@ -2,6 +2,28 @@ import { db } from "@/src/lib/db";
 import { JobStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/companies/{id}:
+ *   get:
+ *     summary: Dohvati kompaniju po ID-u
+ *     tags: [Kompanije]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Kompanija uspesno dohvacena
+ *       404:
+ *         description: Kompanija nije pronadjena
+ *       500:
+ *         description: Greska na serveru
+ */
+
+
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;

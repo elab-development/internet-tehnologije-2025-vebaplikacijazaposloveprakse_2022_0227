@@ -4,6 +4,34 @@ import { UpdateUserData } from "@/src/types/user";
 import { UpdateUserSchema } from "@/src/lib/validators/user";
 import { Role } from "@prisma/client";
 import { getUserFromRequest } from "@/src/lib/requestHelper";
+
+/**
+ * @swagger
+ * /api/users/me:
+ *   get:
+ *     summary: Dohvati profil ulogovanog korisnika
+ *     tags: [Korisnici]
+ *     responses:
+ *       200:
+ *         description: Profil korisnika
+ *       401:
+ *         description: Niste ulogovani
+ *       404:
+ *         description: Korisnik ne postoji
+ *       500:
+ *         description: Greska na serveru
+ *   put:
+ *     summary: Azuriraj profil ulogovanog korisnika
+ *     tags: [Korisnici]
+ *     responses:
+ *       200:
+ *         description: Profil uspesno azuriran
+ *       401:
+ *         description: Niste ulogovani
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function GET(req: NextRequest) {
   try {
     const user = getUserFromRequest(req);

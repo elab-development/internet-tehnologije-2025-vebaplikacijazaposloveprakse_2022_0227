@@ -1,6 +1,28 @@
 import { db } from "@/src/lib/db";
 import { NextResponse } from "next/server";
 
+/**
+ * @swagger
+ * /api/companies:
+ *   get:
+ *     summary: Dohvati sve kompanije
+ *     tags: [Kompanije]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Lista kompanija
+ *       500:
+ *         description: Greska na serveru
+ */
+
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
