@@ -1,5 +1,5 @@
-const APP_ID = process.env.ADZUNA_APP_ID;
-const APP_KEY = process.env.ADZUNA_APP_KEY;
+const APP_ID = process.env.NEXT_PUBLIC_ADZUNA_APP_ID;
+const APP_KEY = process.env.NEXT_PUBLIC_ADZUNA_APP_KEY;
 
 export const adzunaService = {
     async getAverageSalary(jobTitle: string) {
